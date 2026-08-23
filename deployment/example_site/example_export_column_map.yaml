@@ -1,0 +1,348 @@
+# A worked example column map — an Epic-style research export, the same shape as
+# the bundled examples/Test_Patient chart. Your institution's export spells its
+# columns however it spells them; a copy of this file is where that is said once,
+# so recipes never change per site.
+#
+# Point a run at this file from its stage config:
+#     chart_columns_file: deployment/local/example_export_column_map.yaml
+#
+# Keys are source file stems (clinical_note.csv -> clinical_note), matched
+# case-insensitively; a file not listed falls back to Junior's generic defaults.
+#
+# Every column of every table in the example export appears below exactly once, under one of:
+#   <field>: <column>   a chunk metadata field a recipe can filter on — document_date,
+#                       age, doc_type, encounter_id, author, linked_author, title,
+#                       specialty
+#   text_columns:       the free text embedded from this file
+#   identifiers:        direct identifiers; Junior refuses to embed these
+#   data_columns:       the table's own data, named — {our name: this export's column}. A lab
+#                       value, a vital sign, an ICD code. Junior does not filter on
+#                       these, but a recipe reading a table directly (direct_parquet)
+#                       asks for OUR name and gets this site's column, which is what
+#                       lets one recipe run at two institutions.
+chunk_metadata_columns:
+
+  # ── the embedded free-text sources ──────────────────────────────────────────
+  # clinical_note, pathology_report and radiology_report share one header:
+  # patient_id, patient_name, mrn, date, age, type, accession_number, title,
+  # author, linked_author, pat_enc_csn_id, order_proc_id, text
+  clinical_note:
+    text_columns: [text]
+    document_date: date
+    age: age
+    doc_type: type
+    encounter_id: pat_enc_csn_id
+    author: author
+    linked_author: linked_author
+    title: title
+    identifiers: [patient_id, patient_name, mrn, accession_number, order_proc_id]
+
+  pathology_report:
+    text_columns: [text]
+    document_date: date
+    age: age
+    doc_type: type
+    encounter_id: pat_enc_csn_id
+    author: author
+    linked_author: linked_author
+    title: title
+    identifiers: [patient_id, patient_name, mrn, accession_number, order_proc_id]
+
+  radiology_report:
+    text_columns: [text]
+    document_date: date
+    age: age
+    doc_type: type
+    encounter_id: pat_enc_csn_id
+    author: author
+    linked_author: linked_author
+    title: title
+    identifiers: [patient_id, patient_name, mrn, accession_number, order_proc_id]
+
+  # The _meta files are that same header without `text` — report metadata on its own,
+  # so there is nothing to embed from them.
+  clinical_note_meta: &report_meta
+    document_date: date
+    age: age
+    doc_type: type
+    encounter_id: pat_enc_csn_id
+    author: author
+    linked_author: linked_author
+    title: title
+    identifiers: [patient_id, patient_name, mrn, accession_number, order_proc_id]
+
+  pathology_report_meta: *report_meta
+  radiology_report_meta: *report_meta
+
+  # ── encounters and movement ─────────────────────────────────────────────────
+  # The only two tables carrying a specialty: the encounter's department, and the
+  # inpatient service a patient sits under.
+  encounters:
+    document_date: [text]
+    age: age
+    doc_type: encounter_type
+    encounter_id: pat_enc_csn_id
+    author: visit_provider
+    linked_author: admit_provider
+    title: description
+    specialty: dept_specialty
+    identifiers: [patient_id, patient_name, mrn, hosp_account, ip_episode, inpatient_data_id]
+    data_columns:
+      appointment_type:         appt_type
+      appointment_status:       appt_status
+      visit_type:               visit_type
+      patient_class:            patient_class
+      department:               dept_name
+      arrival_time:             arrival_time
+      admission_time:           admission_time
+      admission_age:            admission_age
+      discharge_time:           discharge_time
+      discharge_age:            discharge_age
+      overnight_stay:           overnight
+      length_of_stay_hours:     length_of_stay_hours
+      discharge_disposition:    discharge_disposition
+      discharge_destination:    discharge_destination
+      blood_pressure_systolic:  bp_systolic
+      blood_pressure_diastolic: bp_diastolic
+      temperature:              temperature
+      pulse:                    pulse
+      respirations:             respirations
+      oxygen_saturation:        phys_spo2
+      weight:                   weight
+      height:                   height
+      body_mass_index:          bmi
+      payor:                    payor_name
+      benefit_plan:             benefit_plan_name
+
+  adt:
+    document_date: event_date
+    age: age
+    doc_type: event_type_in
+    encounter_id: pat_enc_csn_id
+    specialty: [pat_service, department]
+    identifiers: [patient_id, patient_name, mrn, event_id, bed_id, room_id]
+    data_columns:
+      sequence_in_encounter: seq_num_in_enc
+      event_type_out:        event_type_out
+      patient_class:         pat_class
+      level_of_care:         pat_lvl_care
+      accommodation:         accommodation
+
+  # ── orders, meds, results ───────────────────────────────────────────────────
+  # `authrzing_provider` is this export's spelling in this table, not a typo here.
+  orders_and_ordersets:
+    document_date: date
+    age: age
+    doc_type: order_type
+    encounter_id: pat_enc_csn_id
+    author: authrzing_provider
+    linked_author: billing_provider
+    title: description
+    identifiers: [patient_id, patient_name, mrn, order_id, proc_id, ss_protocol_id,
+                  ss_section_id, ss_sg_key, ss_merge_template_id]
+    data_columns:
+      order_type_code:           order_type_code
+      order_class:               order_class
+      order_class_code:          order_class_code
+      order_status:              order_status
+      order_status_code:         order_status_code
+      result_time:               result_time
+      future_or_standing:        future_or_standing
+      instantiated_time:         instantiated_time
+      quantity:                  quantity
+      orderset_name:             ss_protocol_name
+      orderset_type_code:        ss_protocol_type_code
+      orderset_record_type_code: ss_protocol_record_type_code
+      orderset_group_name:       ss_sg_name
+      orderset_source_code:      ss_protocol_source_code
+      orderset_scheduled_start:  orderset_sched_start
+      orderset_entry_type:       ss_type_code
+      source:                    source
+
+  labs:
+    document_date: result_date        # when the result landed, not when it was ordered
+    age: age
+    doc_type: specimen
+    encounter_id: pat_enc_csn_id
+    author: authorizing_provider
+    title: lab
+    identifiers: [patient_id, patient_name, mrn]
+    data_columns:
+      ordered_date:   order_date
+      collected_date: taken_date
+      result_text:    result
+      result_value:   value
+      reference_low:  reference_low
+      reference_high: reference_high
+      units:          units
+      abnormal_flag:  abnormal
+      comment:        comment
+      loinc_code:     loinc_code
+
+  med_orders:
+    document_date: order_date
+    age: order_age
+    doc_type: order_class
+    encounter_id: pat_enc_csn_id
+    author: prescribing_provider
+    title: medication
+    identifiers: [patient_id, patient_name, mrn]
+    data_columns:
+      instructions:         sig
+      start_date:           start_date
+      start_age:            start_age
+      end_date:             end_date
+      end_age:              end_age
+      route:                route
+      quantity_dispensed:   disp
+      dose_unit:            unit
+      refills:              refills
+      frequency:            frequency
+      number_of_times:      number_of_times
+      order_status:         order_status
+      order_mode:           order_mode
+      pharmaceutical_class: pharmaceutical_class
+      therapeutic_class:    therapeutic_class
+      ingredients:          ingredients
+
+  med_admin:
+    document_date: taken_date
+    age: taken_date_age
+    doc_type: mar_action
+    encounter_id: pat_enc_csn_id
+    title: medication
+    identifiers: [patient_id, patient_name, mrn]
+    data_columns:
+      line:               line
+      administered_time:  taken_time
+      instructions:       sig
+      route:              route
+      body_site:          site
+      infusion_rate:      infusion_rate
+      infusion_rate_unit: infusion_rate_unit
+      dose_unit:          dose_unit
+      duration:           mar_duration
+      duration_unit:      mar_duration_unit
+
+  immunization:
+    document_date: immunization_date
+    age: age_at_event
+    doc_type: status
+    encounter_id: pat_enc_csn_id
+    author: administered_by
+    title: name
+    identifiers: [patient_id, patient_name, mrn, lot]
+    data_columns:
+      dose:         dose
+      route:        route
+      body_site:    site
+      manufacturer: manufacturer
+      source:       data_source
+
+  # ── coded events ────────────────────────────────────────────────────────────
+  diagnoses:
+    document_date: date
+    age: age
+    doc_type: type
+    encounter_id: pat_enc_csn_id
+    author: performing_provider
+    linked_author: billing_provider
+    title: description
+    identifiers: [patient_id, patient_name, mrn]
+    data_columns:
+      diagnosis_source: source
+      icd9_code:        icd9_code
+      icd10_code:       icd10_code
+
+  procedures:
+    document_date: date
+    age: age
+    doc_type: code_type
+    encounter_id: pat_enc_csn_id
+    author: performing_provider
+    linked_author: billing_provider
+    title: description
+    identifiers: [patient_id, patient_name, mrn, order_proc_id]
+    data_columns:
+      procedure_code: code
+
+  # ── forms and measurements ──────────────────────────────────────────────────
+  flowsheets:
+    document_date: date
+    age: age
+    doc_type: template
+    title: measure
+    identifiers: [patient_id, patient_name, mrn, inpatient_data_id]
+    data_columns:
+      line:          line
+      recorded_time: recorded_time
+      measure_value: value
+      units:         units
+      comment:       comment
+
+  smartform:
+    document_date: date
+    age: age
+    doc_type: type
+    encounter_id: pat_enc_csn_id
+    title: form
+    identifiers: [patient_id, patient_name, mrn, record_id, concept_id]
+    data_columns:
+      attribute:              attribute
+      attribute_abbreviation: attr_abbr
+      answer_value:           value
+      comment:                comment
+      source:                 data_source
+
+  epicprom:
+    document_date: date
+    age: age
+    doc_type: form
+    encounter_id: pat_enc_csn_id
+    title: form_desc
+    identifiers: [patient_id, patient_name, mrn, form_id, question_id, answer_id]
+    data_columns:
+      line:                 line
+      question:             question
+      question_description: question_desc
+      answer:               answer
+      comment:              comment
+      answer_text:          string_answer
+      answer_integer:       int_answer
+      answer_float:         float_answer
+      answer_blank:         is_blank
+      source:               data_source
+
+  # ── patient-level, not document-level ───────────────────────────────────────
+  # One row per patient, with no document identity: nothing authored it, it has no
+  # date of service and no type. `date_of_birth` and `date_of_death` are values a
+  # recipe extracts FROM this table, not metadata about it.
+  demographics:
+    identifiers: [patient_id, patient_name, mrn, zipcode, ssa_death_date_do_not_disclose]
+    data_columns:
+      legal_sex:              legal_sex
+      date_of_birth:          date_of_birth
+      date_of_death:          date_of_death
+      age_at_death:           age_at_death
+      deceased:               deceased
+      race:                   race
+      ethnicity:              ethnicity
+      race_detail:            ethnic_background
+      marital_status:         marital_status
+      occupation:             occupation
+      language:               language
+      interpreter_needed:     interpreter_needed
+      insurance_name:         insurance_name
+      insurance_type:         insurance_type
+      recent_encounter_date:  recent_encounter_date
+      recent_height_cm:       recent_height_cm
+      recent_weight_kg:       recent_weight_kg
+      recent_body_mass_index: recent_bmi
+      smoking_history:        smoking_hx
+      smoking_started:        smoking_started
+      smoking_quit:           smoking_quit
+      smoking_history_taken:  smoking_history_taken
+      alcohol_use:            alcohol_use
+      city:                   city
+      comment:                comment
+      encounters_removed:     encounters_removed

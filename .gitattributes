@@ -1,0 +1,26 @@
+# Auto detect text files and perform LF normalization
+* text=auto
+
+# Force LF on shell scripts, configs, recipes, and prompts so a Windows
+# clone doesn't ship CRLF that breaks `bad interpreter: /usr/bin/env\r`
+# under SLURM, or invalidates a YAML/JSON content_hash on round-trip.
+*.sh    text eol=lf
+*.yaml  text eol=lf
+*.yml   text eol=lf
+*.json  text eol=lf
+*.md    text eol=lf
+*.py    text eol=lf
+
+# Treat known binary blobs as binary (no normalization, no diff noise).
+*.parquet binary
+*.npy     binary
+*.safetensors binary
+hnsw.bin  binary
+
+# The compiled launcher is an app bundle (compiled AppleScript plus an ad-hoc code
+# signature). Treat it as binary so LF normalization never rewrites its bytes and
+# breaks the signature. Its SOURCE is tracked beside it as .applescript, which is what
+# gets reviewed — a compiled bundle does not diff.
+*.app/** binary
+*.applescript text eol=lf
+

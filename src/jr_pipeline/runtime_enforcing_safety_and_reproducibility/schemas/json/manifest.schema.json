@@ -1,0 +1,45 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://jr-pipeline/schemas/manifest.schema.json",
+  "title": "Run Manifest",
+  "description": "Minimal run descriptor at the top of out/<run_id>/manifest.json. Points into code/ via code_lock_hash.",
+  "allOf": [{"$ref": "artifact_envelope.schema.json"}],
+  "properties": {
+    "artifact_type": {"const": "manifest"},
+    "sensitivity": {"const": "low"},
+    "stream": {"const": "data"},
+    "payload": {
+      "type": "object",
+      "required": ["run_id", "code_lock_hash", "created_at", "started_by", "entry_point_name", "config_alias"],
+      "additionalProperties": false,
+      "properties": {
+        "run_id": {"type": "string", "minLength": 1},
+        "code_lock_hash": {"type": "string", "pattern": "^sha256:[a-f0-9]{64}$"},
+        "created_at": {"type": "string", "format": "date-time"},
+        "started_by": {
+          "type": "object",
+          "required": ["user", "host"],
+          "additionalProperties": false,
+          "properties": {
+            "user": {"type": "string"},
+            "host": {"type": "string"},
+            "slurm_job_id": {"type": ["string", "null"]}
+          }
+        },
+        "entry_point_name": {"type": "string"},
+        "config_alias": {"type": ["string", "null"]},
+        "n_target_patients": {"type": "integer", "minimum": 0},
+        "completed_at": {"type": ["string", "null"], "format": "date-time"},
+        "status": {
+          "type": "string",
+          "enum": ["pending", "running", "completed", "completed_with_errors", "failed", "cancelled"]
+        },
+        "model_sha256": {
+          "description": "Pinned model.safetensors sha256:<hex> for embed-stage runs; null for stages that do not load a neural encoder. Taken from encoder.expected_file_sha256['model.safetensors'] in the stage config.",
+          "type": ["string", "null"],
+          "pattern": "^sha256:[a-f0-9]{64}$"
+        }
+      }
+    }
+  }
+}

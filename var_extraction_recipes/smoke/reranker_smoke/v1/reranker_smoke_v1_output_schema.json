@@ -1,0 +1,8 @@
+{
+  "type": "object",
+  "properties": {
+    "evidence_mentions_cancer": {"type": ["boolean", "null"]},
+    "evidence_chunk_id": {"type": ["string", "null"]}
+  },
+  "additionalProperties": true
+}

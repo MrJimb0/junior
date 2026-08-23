@@ -1,0 +1,168 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://jr-pipeline/schemas/chunk_index.parquet.schema.json",
+  "title": "Chunk Index (parquet column schema)",
+  "description": "Per-patient offset table. One row per chunk. No chunk text stored \u2014 retrieval reads text from structured/<source_file>.parquet using (row_id, source_column) plus (char_start, char_end). Sidecar sibling chunk_index.parquet.meta.json carries the artifact envelope.",
+  "type": "object",
+  "required": [
+    "columns"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "columns": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "name",
+          "dtype",
+          "nullable",
+          "description"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "dtype": {
+            "type": "string"
+          },
+          "nullable": {
+            "type": "boolean"
+          },
+          "description": {
+            "type": "string"
+          }
+        }
+      },
+      "const": [
+        {
+          "name": "chunk_id",
+          "dtype": "Utf8",
+          "nullable": false,
+          "description": "Stable canonical id: f'{patient_id}:{source_file_stem}:{row_id}:{chunk_idx}'"
+        },
+        {
+          "name": "patient_id",
+          "dtype": "Utf8",
+          "nullable": false,
+          "description": "Folder name of the patient in raw/."
+        },
+        {
+          "name": "source_file",
+          "dtype": "Utf8",
+          "nullable": false,
+          "description": "Relative path of the source CSV under the patient folder."
+        },
+        {
+          "name": "source_stem",
+          "dtype": "Utf8",
+          "nullable": false,
+          "description": "Extension-stripped stem of source_file; the {patient}:{stem}:{row}:... component of chunk_id and the source key for :TABLE chunk resolution."
+        },
+        {
+          "name": "row_id",
+          "dtype": "Int64",
+          "nullable": false,
+          "description": "0-based row index in the preserved parquet for that source file."
+        },
+        {
+          "name": "source_column",
+          "dtype": "Utf8",
+          "nullable": false,
+          "description": "Column name within the row whose text was embedded."
+        },
+        {
+          "name": "source_text_sha256",
+          "dtype": "Utf8",
+          "nullable": false,
+          "description": "sha256 of the FULL source row text (not the chunk) \u2014 a row-text fingerprint for audit/provenance."
+        },
+        {
+          "name": "chunk_idx",
+          "dtype": "Int32",
+          "nullable": false,
+          "description": "0-based chunk index within that (row, column)."
+        },
+        {
+          "name": "char_start",
+          "dtype": "Int64",
+          "nullable": false,
+          "description": "Character offset (inclusive) within source_column text."
+        },
+        {
+          "name": "char_end",
+          "dtype": "Int64",
+          "nullable": false,
+          "description": "Character offset (exclusive) within source_column text."
+        },
+        {
+          "name": "token_count",
+          "dtype": "Int32",
+          "nullable": false,
+          "description": "Number of tokens in this chunk under the encoder's tokenizer."
+        },
+        {
+          "name": "parent_tokens",
+          "dtype": "Int32",
+          "nullable": false,
+          "description": "Total tokens in the parent row.source_column text."
+        },
+        {
+          "name": "num_chunks",
+          "dtype": "Int32",
+          "nullable": false,
+          "description": "Total number of chunks this row.source_column was split into."
+        },
+        {
+          "name": "document_date",
+          "dtype": "Utf8",
+          "nullable": true,
+          "description": "Document date for the source row, auto-detected from a date-like column (date/note_date/document_date/...). Null when no such column exists."
+        },
+        {
+          "name": "age",
+          "dtype": "Utf8",
+          "nullable": true,
+          "description": "Patient age at the document, from the column this site's map names (for example `age`). The de-identified time axis an export usually ships beside the date; null when the source carries no such column."
+        },
+        {
+          "name": "doc_type",
+          "dtype": "Utf8",
+          "nullable": true,
+          "description": "Document type for the source row, auto-detected (type/doc_type/note_type/...). Null when absent."
+        },
+        {
+          "name": "encounter_id",
+          "dtype": "Utf8",
+          "nullable": true,
+          "description": "Encounter/accession id for the source row, auto-detected (pat_enc_csn_id/encounter_id/...). Null when absent."
+        },
+        {
+          "name": "author",
+          "dtype": "Utf8",
+          "nullable": true,
+          "description": "Author/provider for the source row (who wrote it), from the configured author column or auto-detected (author/provider_name/...). Null when absent."
+        },
+        {
+          "name": "linked_author",
+          "dtype": "Utf8",
+          "nullable": true,
+          "description": "Co-signer / linked author for the source row, from the configured column or auto-detected (linked_author/...). Null when absent."
+        },
+        {
+          "name": "title",
+          "dtype": "Utf8",
+          "nullable": true,
+          "description": "Document title for the source row (e.g. the note title), from the configured column or auto-detected (title/note_title/...). Null when absent."
+        },
+        {
+          "name": "specialty",
+          "dtype": "Utf8",
+          "nullable": true,
+          "description": "Clinical specialty or service the document belongs to, from the column this site's chunk_metadata_columns maps (for example dept_specialty / pat_service). Null when the source carries no such column \u2014 most note tables do not."
+        }
+      ]
+    }
+  }
+}

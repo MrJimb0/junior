@@ -1,0 +1,61 @@
+# LLM allowlist — the services this deployment is permitted to send chart text to.
+#
+# EDIT THIS BEFORE YOU RUN. The pipeline refuses any endpoint not named here, which is
+# the point: it is the one file standing between a patient's notes and a service nobody
+# signed an agreement with. Every <ANGLE_BRACKET> below is a placeholder and will fail
+# loudly if left in.
+#
+# "BAA-attested" means the service is covered by a Business Associate Agreement — the
+# HIPAA contract that lets protected health information be sent there. Mark an endpoint
+# `attestation: baa` only when your institution has one for it. `self_hosted` means the
+# weights run on hardware you control and nothing leaves it.
+#
+# The `auth` field names an ENVIRONMENT VARIABLE, never a key. The pipeline reads it at
+# call time, never writes it to disk, and never logs it. Set it in your shell:
+#
+#   export LLM_GATEWAY_KEY="$(cat ~/.config/jr/gateway_key)"
+#
+# The header the key is sent in depends on your gateway — an API-gateway product
+# usually wants its own (Azure API Management uses Ocp-Apim-Subscription-Key), while a
+# plain OpenAI-compatible server wants `Authorization: Bearer`. `provider` selects that.
+#
+# What each model can DO is declared separately, in ../../models_registry.yaml.
+
+# This example assumes a managed gateway in front of cloud models — the shape most
+# institutions use for a secure research platform. Every route is BAA-attested because
+# chart text is going off the machine; if yours is not, do not mark it so.
+
+allowed_endpoints:
+
+  # ── A cloud model behind your institution's gateway ──
+  - name: gateway_gpt
+    url: https://<YOUR_LLM_GATEWAY_HOST>/<YOUR_GATEWAY_PATH>/chat/completions
+    api_version: "<YOUR_API_VERSION>"
+    provider: openai_compat
+    attestation: baa
+    auth: "gateway:$LLM_GATEWAY_KEY"
+    default_model: <YOUR_MODEL_DEPLOYMENT_NAME>
+    # Some deployments rename or refuse standard parameters. These two flags exist
+    # because a real one did both, and the failure reads as a broken pipeline.
+    # use_max_completion_tokens: true
+    # skip_temperature: true
+
+  # ── A Vertex AI model on the same platform ──
+  - name: vertex_model
+    url: https://<YOUR_LLM_GATEWAY_HOST>/<YOUR_VERTEX_PATH>/chat/completions
+    # No api_version here: the gemini_compat provider does not take one, and the
+    # allowlist loader refuses a key a provider cannot use rather than ignoring it.
+    provider: gemini_compat
+    attestation: baa
+    auth: "gateway:$LLM_GATEWAY_KEY"
+    default_model: <YOUR_VERTEX_MODEL_NAME>
+
+  # ── A model running on the platform's own hardware ──
+  - name: platform_hosted_model
+    url: https://<YOUR_LLM_GATEWAY_HOST>/<YOUR_SELF_HOSTED_PATH>/v1/chat/completions
+    api_version: null
+    provider: openai_compat
+    attestation: baa
+    auth: "gateway:$LLM_GATEWAY_KEY"
+    default_model: <YOUR_SELF_HOSTED_MODEL_NAME>
+    default_timeout_seconds: 300

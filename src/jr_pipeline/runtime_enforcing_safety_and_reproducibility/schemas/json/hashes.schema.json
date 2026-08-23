@@ -1,0 +1,42 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://jr-pipeline/schemas/hashes.schema.json",
+  "title": "Scoped Hash Index",
+  "description": "Structured index of every content hash the run depends on. Lives at code/hashes.json. Consumers use this to make invalidation decisions at fine grain (per recipe, per prompt, per schema) rather than coarsely on code_lock_hash alone.",
+  "allOf": [{"$ref": "artifact_envelope.schema.json"}],
+  "properties": {
+    "artifact_type": {"const": "hashes"},
+    "sensitivity": {"const": "low"},
+    "stream": {"const": "code"},
+    "payload": {
+      "type": "object",
+      "required": ["code_lock_hash"],
+      "additionalProperties": false,
+      "properties": {
+        "code_lock_hash":        {"type": "string", "pattern": "^sha256:[a-f0-9]{64}$"},
+        "config_hash":           {"type": "string", "pattern": "^sha256:[a-f0-9]{64}$"},
+        "provider_config_hash":  {"type": ["string", "null"], "pattern": "^sha256:[a-f0-9]{64}$"},
+        "retrieval_config_hash": {"type": ["string", "null"], "pattern": "^sha256:[a-f0-9]{64}$"},
+        "env_hash":              {"type": "string", "pattern": "^sha256:[a-f0-9]{64}$"},
+        "dependencies_hash":     {"type": "string", "pattern": "^sha256:[a-f0-9]{64}$"},
+        "per_recipe": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "object",
+            "required": ["recipe_hash", "schema_hash", "prompt_hashes", "python_helpers_hash"],
+            "additionalProperties": false,
+            "properties": {
+              "recipe_hash":   {"type": "string", "pattern": "^sha256:[a-f0-9]{64}$"},
+              "schema_hash":   {"type": ["string", "null"], "pattern": "^sha256:[a-f0-9]{64}$"},
+              "python_helpers_hash": {"type": ["string", "null"], "pattern": "^sha256:[a-f0-9]{64}$"},
+              "prompt_hashes": {
+                "type": "object",
+                "additionalProperties": {"type": "string", "pattern": "^sha256:[a-f0-9]{64}$"}
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,59 @@
+name: second_opinion_or_not
+version: v1
+collection: oncology
+
+# Combines the portable
+# keyword path with author/linked-author metadata already rendered in evidence headers
+# and explicit newest-visit coverage. Two passes —
+# establish the treating oncologist, then decide whether care remained a SECOND opinion
+# rather than becoming ongoing treatment — then a Python step to combine them. Archetype (the reusable recipe
+# shape this follows): classification_adjudication.
+
+archetype: classification_adjudication
+
+roles:
+  clinical_notes: { source_file: clinical_note.csv }
+
+output_schema: second_opinion_or_not_v1_output_schema.json
+
+llm:
+  model: local_qwen
+  max_tokens: 800
+
+reranking:
+  top_n: 30
+  chronological_order: newest_first
+
+depends_on: []
+
+steps:
+  # Pass 1 — who is the patient's primary treating oncologist (and at what site)?
+  # (hybrid = combine keyword search with vector/meaning search; k = how many top text
+  # chunks to retrieve and show the model.)
+  - id: identify_oncologist
+    kind: retrieve_and_prompt
+    retrieval:
+      kind: bm25
+      query: "medical oncology consult establishing care treating oncologist primary oncologist new patient visit plan of care"
+      k: 15
+      include_recent: 15
+      source_file: clinical_note.csv
+    prompt: prompts/second_opinion_or_not_v1_identify_oncologist.md
+
+  # Pass 2 — decide whether this remained a second-opinion/brief-consult relationship
+  # rather than becoming ongoing treatment, given the oncologist from pass 1.
+  - id: decide_second_opinion
+    kind: retrieve_and_prompt
+    retrieval:
+      kind: bm25
+      query: "second opinion outside consultation transfer of care establishing care at another institution referred for evaluation seeking opinion came for second opinion"
+      k: 15
+      include_recent: 15
+      source_file: clinical_note.csv
+    prompt: prompts/second_opinion_or_not_v1_decide.md
+
+  # Finalize — combine the two passes into the single yes/no output. Pure Python — no
+  # model call.
+  - id: finalize
+    kind: python
+    module: second_opinion_or_not_v1_python_helper.finalize

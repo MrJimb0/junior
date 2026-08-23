@@ -1,0 +1,11 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://jr-pipeline/schemas/rerun_manifest.schema.json",
+  "title": "rerun_manifest (Gate 2+ stub)",
+  "description": "Stub schema — fully specified during the gate that introduces this artifact.",
+  "allOf": [{"$ref": "artifact_envelope.schema.json"}],
+  "properties": {
+    "artifact_type": {"const": "rerun_manifest"},
+    "payload": {"type": "object"}
+  }
+}

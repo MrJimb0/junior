@@ -1,0 +1,92 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "stage output",
+  "description": "Site-agnostic AJCC stage AT ORIGINAL DIAGNOSIS for any solid tumor. stage_at_diagnosis.overall_group is the AJCC anatomic group incl. substage; clinical_tnm/pathologic_tnm carry the cTNM/pTNM components. A later recurrence or metastatic progression is NOT captured here (it lives in date_of_diagnosis / treatment_lines). Provenance: each populated object carries its own evidence_chunk_id; everything is null (not 'unknown') when not found.",
+  "type": "object",
+  "required": ["stage_at_diagnosis", "rationale"],
+  "additionalProperties": true,
+  "properties": {
+    "stage_at_diagnosis": {
+      "type": "object",
+      "required": ["overall_group", "basis"],
+      "additionalProperties": true,
+      "properties": {
+        "overall_group": {
+          "oneOf": [
+            {"type": "string", "enum": ["0", "I", "IA", "IB", "II", "IIA", "IIB", "IIC", "III", "IIIA", "IIIB", "IIIC", "IV", "IVA", "IVB", "IVC", "occult"]},
+            {"type": "null"}
+          ]
+        },
+        "basis": {
+          "oneOf": [
+            {"type": "string", "enum": ["clinical", "pathologic"]},
+            {"type": "null"}
+          ]
+        },
+        "evidence_chunk_id": {"type": ["string", "null"]}
+      }
+    },
+    "clinical_tnm": {
+      "oneOf": [
+        {
+          "type": "object",
+          "additionalProperties": true,
+          "properties": {
+            "cT": {"type": ["string", "null"]},
+            "cN": {"type": ["string", "null"]},
+            "cM": {"type": ["string", "null"]},
+            "evidence_chunk_id": {"type": ["string", "null"]}
+          }
+        },
+        {"type": "null"}
+      ]
+    },
+    "pathologic_tnm": {
+      "oneOf": [
+        {
+          "type": "object",
+          "additionalProperties": true,
+          "properties": {
+            "pT": {"type": ["string", "null"]},
+            "pN": {"type": ["string", "null"]},
+            "pM": {"type": ["string", "null"]},
+            "evidence_chunk_id": {"type": ["string", "null"]}
+          }
+        },
+        {"type": "null"}
+      ]
+    },
+    "pretreatment_path_stage": {
+      "description": "Legacy-compatible alias for pathologic_tnm before neoadjuvant treatment.",
+      "oneOf": [
+        {"type": "object", "additionalProperties": true},
+        {"type": "null"}
+      ]
+    },
+    "posttreatment_path_stage": {
+      "description": "Post-neoadjuvant ypTNM and residual cancer burden; never replaces stage_at_diagnosis.",
+      "oneOf": [
+        {
+          "type": "object",
+          "additionalProperties": true,
+          "properties": {
+            "ypT": {"type": ["string", "null"]},
+            "ypN": {"type": ["string", "null"]},
+            "ypM": {"type": ["string", "null"]},
+            "overall_group": {"type": ["string", "null"]},
+            "rcb_class": {
+              "oneOf": [
+                {"type": "string", "enum": ["0", "I", "II", "III"]},
+                {"type": "null"}
+              ]
+            },
+            "treatment_effect": {"type": ["string", "null"]},
+            "evidence_chunk_id": {"type": ["string", "null"]}
+          }
+        },
+        {"type": "null"}
+      ]
+    },
+    "rationale": {"type": "string", "maxLength": 600}
+  }
+}

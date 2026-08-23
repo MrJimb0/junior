@@ -1,0 +1,38 @@
+# Laptop recipe-dev / CONSUME config — for reading a search corpus that was BUILT on
+# a cluster (the heavy ingest/embed/index work) and copied back to a laptop,
+# where the lighter extraction step runs. ("Corpus" here = the indexed collection of
+# text chunks and their numeric vectors that the pipeline searches over.)
+# Run the per-step `seal` (freeze the config + inputs) then `extract` against this
+# config, from the repo root.
+#
+# The encoder is the model that turns text into a numeric "embedding" vector capturing
+# its meaning. The encoder block here MUST match the cluster embed_override's
+# VECTOR-AFFECTING fields, so the model that encodes a search QUERY produces vectors
+# in the same space as the corpus that was already encoded on the cluster:
+#   dtype: float16 -> the content hash of the weights file (model_sha256; here
+#   "ea7388...") is identical on both machines; pooling/normalize/max_tokens
+#   must match too.
+# The model_id PATH may differ between the cluster and the laptop — it is EXCLUDED from the
+# encoder-match check (a file location does not change the resulting vectors). Verify
+# the match with check_encoder_alignment.py before running a whole cohort.
+#
+# Recipe-dev loop: edit a recipe under var_extraction_recipes/, RE-SEAL (sealing takes
+# a frozen snapshot of the recipe), then extract. Or use a fresh run_id per edit.
+
+run_id: "REPLACE_WITH_SYNCED_RUN_ID"
+output_root: "./data"            # laptop JR_DATA_ROOT; corpus read from
+                                 # ./data/CONTAINS_PHI/pipeline_run_receipts/<run_id>/patients/<pid>/
+recipes_root: "./var_extraction_recipes"
+recipes:                         # which clinical variables to extract is set by THIS
+                                 # list, not by a --recipes command-line flag
+  - date_of_diagnosis
+allowlist_path: "./deployment/local/llm_allowlist_local3b.yaml"
+encoder:
+  model_id: "./models/embedding/thomas-sounack:BioClinical-ModernBERT-base23APR2026"
+  pooling: mean
+  normalize: true
+  max_tokens: 512
+  dtype: float16                 # MATCH the cluster (compared, vector-affecting)
+chunker:
+  kind: token_window
+  overlap: 128

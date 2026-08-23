@@ -1,0 +1,62 @@
+name: breast_receptors
+version: v1
+collection: oncology
+
+# Breast-specific receptor and detailed pathology features at original diagnosis. Kept
+# separate from the generic `stage` recipe so `stage` stays site-agnostic. Only
+# meaningful for breast cohorts; a non-breast chart yields nulls
+# (null = not stated / not applicable), which is the correct, fully-provenanced result.
+
+archetype: point_fact
+
+roles:
+  pathology_documents: { source_file: pathology_report.csv }
+  clinical_notes: { source_file: clinical_note.csv }
+
+output_schema: breast_receptors_v1_output_schema.json
+
+llm:
+  model: local_qwen
+  max_tokens: 1024
+
+
+reranking:
+  top_n: 20
+  chronological_order: oldest_first
+  source_priority:
+    pathology_report.csv: 1.0
+
+depends_on: [date_of_diagnosis]
+
+steps:
+  # Pass 1 — receptors / grade / size / margins from the EARLIEST invasive specimen.
+  # retrieve_and_prompt = search the pathology reports for the most relevant short
+  # passages, then ask the language model to read only those passages and answer.
+  - id: receptors
+    kind: retrieve_and_prompt
+    retrieval:
+      # hybrid search blends classic keyword / term-frequency matching (BM25) with
+      # meaning-based vector similarity and merges the two ranked lists. The query
+      # is keyword fuel for that search, not a question asked of the model.
+      kind: hybrid
+      query: "estrogen receptor ER progesterone receptor PR HER2 IHC ISH FISH Nottingham grade tumor size margins invasive ductal lobular carcinoma"
+      # k = how many top passages to hand the model to read.
+      k: 20
+      source_file: pathology_report.csv
+    prompt: prompts/breast_receptors_v1_extract.md
+
+  # Pass 2 — clinical-note repair: fill only receptor values still missing
+  # after pathology review. It cannot overwrite a pathology result.
+  - id: clinical_receptor_repair
+    kind: retrieve_and_prompt
+    retrieval:
+      kind: bm25
+      query: "ER positive ER negative estrogen receptor PR positive PR negative progesterone receptor HER2 positive HER2 negative HER2 amplified FISH IHC receptor status pathology"
+      k: 20
+      source_file: clinical_note.csv
+    prompt: prompts/breast_receptors_v1_clinical_repair.md
+
+  # Finalize — normalize the enums, drop invalid values, ground when found. Pure Python.
+  - id: finalize
+    kind: python
+    module: breast_receptors_v1_python_helper.finalize

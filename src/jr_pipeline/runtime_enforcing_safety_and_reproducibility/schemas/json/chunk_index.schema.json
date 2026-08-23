@@ -1,0 +1,24 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://jr-pipeline/schemas/chunk_index.schema.json",
+  "title": "Chunk Index sidecar envelope",
+  "description": "Sidecar JSON written alongside chunk_index.parquet. The parquet column layout is documented in chunk_index.parquet.schema.json (not a JSON Schema — it lists the expected parquet columns).",
+  "allOf": [{"$ref": "artifact_envelope.schema.json"}],
+  "properties": {
+    "artifact_type": {"const": "chunk_index"},
+    "sensitivity": {"enum": ["medium", "high"]},
+    "stream": {"const": "data"},
+    "payload": {
+      "type": "object",
+      "required": ["patient_id", "row_count", "columns", "parquet_content_hash"],
+      "additionalProperties": true,
+      "properties": {
+        "patient_id":            {"type": "string"},
+        "row_count":             {"type": "integer", "minimum": 0},
+        "encoder":               {"type": "object"},
+        "columns":               {"type": "array", "items": {"type": "string"}},
+        "parquet_content_hash":  {"type": "string", "pattern": "^sha256:[a-f0-9]{64}$"}
+      }
+    }
+  }
+}

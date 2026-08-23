@@ -1,0 +1,38 @@
+# Production settings for the embed stage on Nero — turning chart text into
+# numeric vectors. Self-contained — anything not set here uses the code defaults
+# in pipeline_steps/step_2_embed_chunks/embed.py. Those defaults split text into
+# chunks of up to 512 tokens with 128 tokens of overlap between neighbors
+# (token_window 512/128), and "files: auto" means: embed the `text` column of
+# every ingested table that has one.
+#
+# Pins the BioClinical-ModernBERT model to a Nero-local folder and verifies
+# each weight file by its SHA-256 content hash (a short value computed from a
+# file's bytes; any change to the file changes the hash). The model loader
+# re-hashes each pinned file at load time and refuses to run on any mismatch —
+# this catches a corrupted file copy before any GPU time is spent.
+
+run_id: "${oc.env:JR_RUN_ID,null}"
+output_root: "${oc.env:JR_OUT_ROOT,null}"
+
+# The same map ingest used. Embed reads it for a different half of the answer: which
+# columns hold free text, decided here rather than at ingest. Both stages must name the
+# same map or one reads the charts differently from the other.
+chart_columns_file: deployment/<your_institution>/<YOUR_EHR_EXPORT>_output_Column_Name_Map.yaml
+
+encoder:
+  model_id: <YOUR_SHARED_DIR>/models/BioClinical-ModernBERT-base
+  pooling: mean
+  normalize: true
+  max_tokens: 512
+  dtype: float16
+  device: cuda
+  expected_file_sha256:
+    model.safetensors: ea7388682b12cb833491ca8a697e84e3e67122c65c9c658f4ad3355fdd891546
+    config.json: dd3550a1b22f63cbc24b2015dbcd8b64bcf1050c265c3d30191236be886fb071
+    special_tokens_map.json: e232f6a2ac8b149dc247c27e30282c42b0b70720a35cc845fa3e791f9ee9da00
+    tokenizer_config.json: 11251bae0abce4551fb3e1822e487b31700b1ccc3c036743f4c64cf2161b9457
+    tokenizer.json: 9fd55248d51d33976b324fc11592e28071da7d41e0e9401dfb7082e30574b7b1
+
+# The A100 GPU has enough memory (VRAM) to process 64 chunks at once per model
+# pass, versus the default of 16 — larger batches = faster throughput.
+batch_size: 64

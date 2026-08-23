@@ -1,0 +1,19 @@
+# the cluster ingest config. "Ingest" is the first stage: it reads the raw chart files
+# from each patient's folder. Self-contained — anything not set here falls back to
+# the code defaults in pipeline_steps/step_1_ingest_raw_files/ingest.py
+# (files: auto = every supported file in each patient folder; source_root
+# default = <data_root>/CONTAINS_PHI/patient_data_input/).
+#
+# All values come from the environment of whoever submits the cluster job — see ingest.sh.
+
+run_id: "${oc.env:JR_RUN_ID,null}"
+source_root: "${oc.env:JR_SOURCE_ROOT,null}"
+output_root: "${oc.env:JR_OUT_ROOT,null}"
+
+# Which column of a <YOUR_EHR_EXPORT> export holds each chart field. Ingest resolves this against
+# every file's real header and records the answer in that file's sidecar, so it is
+# settled here for good: later stages read what was recorded, and changing this file
+# afterwards does not revisit a run — `--force`, or a new --run-id, is what does.
+# Without it, generic aliases are used, and a <YOUR_EHR_EXPORT> export's labs (result_date,
+# authorizing_provider) and adt (event_date) match none of them.
+chart_columns_file: deployment/<your_institution>/<YOUR_EHR_EXPORT>_output_Column_Name_Map.yaml

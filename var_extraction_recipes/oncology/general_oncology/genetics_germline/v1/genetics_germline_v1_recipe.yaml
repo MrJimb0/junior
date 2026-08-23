@@ -1,0 +1,54 @@
+name: genetics_germline
+version: v1
+collection: oncology
+
+# What this recipe does: pull the patient's HEREDITARY (germline) cancer-gene panel
+# results out of the chart and list one result per gene tested.
+#
+# A BM25 pass over the
+# patient's documents plus explicit newest-chart coverage. Per-gene
+# de-duplication is folded into the
+# prompt's "one entry per gene" instruction. A finalize step with no language-model
+# call passes the panel result through unchanged and attaches the supporting evidence
+# pointer for the top-level genetic_testing_done determination. Enumeration archetype
+# (the job is to LIST items, here one per gene).
+
+archetype: enumeration
+
+roles:
+  clinical_notes:      { source_file: clinical_note.csv }
+  pathology_documents: { source_file: pathology_report.csv }
+
+output_schema: genetics_germline_v1_output_schema.json
+
+llm:
+  model: local_qwen
+  max_tokens: 1500
+
+reranking:
+  top_n: 20
+  chronological_order: oldest_first
+
+depends_on: []
+
+steps:
+  # Single search pass — look across ALL of the patient's documents (no source_file
+  # restriction; germline results turn up in progress notes, genetics-consult notes,
+  # and pathology addenda alike) and emit one entry per panel gene that was tested.
+  # Keep the top 10 BM25 hits plus up to 10 additional newest chunks.
+  - id: extract_germline
+    kind: retrieve_and_prompt
+    retrieval:
+      kind: bm25
+      query: "germline hereditary genetic testing panel BRCA1 BRCA2 ATM CHEK2 PALB2 TP53 PTEN CDH1 pathogenic likely pathogenic variant of uncertain significance VUS negative no mutation detected"
+      k: 10
+      include_recent: 10
+    prompt: prompts/genetics_germline_v1_extract.md
+
+  # Attach the supporting-evidence pointer for the top-level determination to the
+  # chunks that were actually searched (read-fallback = if the model did not cite a
+  # specific chunk, fall back to the ones it was shown). Passes the panel data through
+  # unchanged, so the list-of-genes result is not altered.
+  - id: finalize
+    kind: python
+    module: genetics_germline_v1_python_helper.finalize

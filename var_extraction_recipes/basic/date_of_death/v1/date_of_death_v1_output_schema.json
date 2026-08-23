@@ -1,0 +1,19 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "date_of_death output",
+  "description": "Ported from v0 date_of_death (demographics -> death-search -> holistic vital-status inference). 'date_of_death' is the explicit confirmed date (never estimated); 'vital_status' may be 'dead' with a null date (confirmed dead, no date). 'date_of_death' is the field downstream recipes read. 'evidence_chunk_id' grounds the determination (the demographics row or note the deciding pass read) -- vital_status is a real clinical claim, so dead/alive cite their source; a null/'unknown' non-determination may carry null.",
+  "type": "object",
+  "required": ["date_of_death", "vital_status"],
+  "additionalProperties": true,
+  "properties": {
+    "date_of_death": {
+      "oneOf": [
+        {"type": "string", "pattern": "^\\d{4}-(\\d{2}|XX)-(\\d{2}|XX)$"},
+        {"type": "null"}
+      ]
+    },
+    "vital_status": {"type": "string", "enum": ["dead", "alive", "unknown"]},
+    "evidence_chunk_id": {"type": ["string", "null"]},
+    "confidence": {"type": ["integer", "null"], "minimum": 0, "maximum": 100}
+  }
+}

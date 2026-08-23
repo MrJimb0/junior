@@ -1,0 +1,15 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "second_opinion_or_not output",
+  "description": "Modern port of v0 second_opinion_or_not. The canonical field is the boolean `second_opinion`: did the consulting relationship remain a second opinion or brief consult, rather than becoming ongoing treatment? Transfer or establishment of ongoing care is false. The recipe uses portable note author metadata, visit coverage, and two-pass adjudication without a site-specific credentials file.",
+  "type": "object",
+  "required": ["second_opinion", "reason"],
+  "additionalProperties": true,
+  "properties": {
+    "second_opinion": {"type": ["boolean", "null"]},
+    "treating_oncologist": {"type": ["string", "null"]},
+    "consulting_institution": {"type": ["string", "null"]},
+    "reason": {"type": "string", "maxLength": 400},
+    "evidence_chunk_id": {"type": ["string", "null"]}
+  }
+}

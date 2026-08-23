@@ -1,0 +1,126 @@
+[build-system]
+requires = ["setuptools>=77", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "junior"
+version = "0.0.1"
+description = "Auditable per-patient clinical RAG extraction pipeline"
+readme = "README.md"
+license = "PolyForm-Noncommercial-1.0.0"
+license-files = ["LICENSE"]
+authors = [{ name = "James Dickerson", email = "jcdicker@stanford.edu" }]
+requires-python = ">=3.11"
+
+# Core runtime dependencies the package always needs to import.
+dependencies = [
+    "click>=8.1",
+    "filelock>=3.13",
+    "hnswlib>=0.7",
+    "jinja2>=3.1",
+    # [format-nongpl] registers the RFC3339 'date-time' format checker (via
+    # rfc3339-validator) so the 6 timestamp fields' `format: date-time` constraints
+    # are actually enforced (review #6). The non-GPL extra deliberately excludes the
+    # GPL `rfc3987` that plain [format] would pull in; only date-time is used. James
+    # approved this dependency 2026-06-18 (ADR 0034).
+    "jsonschema[format-nongpl]>=4.20",
+    "numpy>=1.26",
+    # A run's answer tables are workbooks, the shape the pre-rewrite pipeline wrote.
+    # They carry the cited passage beside the value, and multi-line clinical text in a
+    # CSV is a quoted field spanning forty physical lines — a two-patient file read as
+    # a shredded one. A spreadsheet cell holds it, needs no byte-order mark to open
+    # correctly, and keeps booleans and counts as types rather than strings. Pure
+    # Python, no compiled extension. James chose the format 2026-08-20.
+    "openpyxl>=3.1",
+    "omegaconf>=2.3",
+    "pydantic>=2.0",
+    "polars>=1.0",
+    "pyyaml>=6.0",
+    "rank-bm25>=0.2.2",
+    "requests>=2.31",
+    "structlog>=24.0",
+]
+
+[project.optional-dependencies]
+# Torch + HuggingFace transformers — required by the production embed stage
+# (BioClinical-ModernBERT). Kept out of the default install so a CPU-only
+# operator can use the package without pulling >2 GB of CUDA wheels.
+torch = [
+    "torch>=2.1",
+    "transformers>=4.40",
+    "safetensors>=0.4",
+]
+# Optional reader for .xlsx source files (ingest stage).
+xlsx = ["fastexcel>=0.10"]
+# The browser workbench — the recommended first touch (see README "Start Here").
+# Just the UI: the app boots on the core deps + Shiny and answers with grounded chart
+# quotes (extractive) when no model weights are present. Add the `torch` extra and
+# provide Qwen 2.5 3B weights for on-device LLM answers.
+app = ["shiny>=1.0"]
+# Dev tooling.
+dev = [
+    "pytest>=8.0",
+    "pytest-cov>=4.1",
+    "ruff>=0.5",
+    "mypy>=1.10",
+    "coverage>=7.0",
+]
+
+[project.scripts]
+# `junior` is the command. `jr-pipeline` is the same entry point under its old name,
+# kept because the SLURM deployment scripts and existing run docs invoke it. The CLI
+# lives in apps_and_interfaces/ beside the review app: both are operator surfaces
+# over the jr_pipeline engine in src/, and deployment (SLURM/cloud) sits on top
+# of the CLI.
+junior = "apps_and_interfaces.command_line_interface:main"
+jr-pipeline = "apps_and_interfaces.command_line_interface:main"
+
+[tool.setuptools.packages.find]
+# Two roots: the engine (src/jr_pipeline) and the operator surfaces
+# (apps_and_interfaces), which the console scripts above enter through.
+where = ["src", "."]
+include = ["jr_pipeline*", "apps_and_interfaces*"]
+
+[tool.setuptools.package-data]
+jr_pipeline = [
+    "py.typed",
+    "runtime_enforcing_safety_and_reproducibility/schemas/json/*.schema.json",
+    "pipeline_steps/*/*.yaml",
+    "runtime_infrastructure/*.yaml",
+]
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "B", "UP", "W"]
+ignore = ["E501"]
+
+[tool.ruff.lint.per-file-ignores]
+# A notebook is cells in order, so an import belongs wherever its cell is. Reporting
+# that forever taught everyone to read past this checker's output, which is the cost
+# of a rule that is wrong about the file it is applied to.
+"notebooks/*" = ["E402"]
+
+[tool.mypy]
+# No python_version pin. Pinning it below the interpreter the venv actually runs
+# stopped the check dead — numpy's shipped stubs use syntax the pinned version does
+# not have, and mypy reports that one file and checks nothing else. A type checker
+# that exits before it reads your code is worse than none, because the clean exit
+# reads as a pass; the guardrail test asserts it still checks the whole tree.
+strict = false
+ignore_missing_imports = true
+# Both roots. The CLI moved from src/jr_pipeline into apps_and_interfaces/ and this
+# said "src" for a week afterwards, so the ten thousand lines of operator surface —
+# the code most likely to break in somebody else's hands — silently left the one check
+# that catches a name that does not exist. The guardrail counts the files checked, so
+# it notices a root falling out; it cannot notice a root that was never named.
+files = ["src", "apps_and_interfaces"]
+
+[tool.pytest.ini_options]
+testpaths = ["security_and_pipeline_tests"]
+addopts = "-ra --strict-markers"
+markers = [
+    "slow: needs torch + local model weights (skipped when absent)",
+]

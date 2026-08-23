@@ -1,0 +1,32 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "genetics_somatics output",
+  "description": "Ported from v0 genetics_somatics (single BM25 pass). Isomorphic to genetics_germline but for the somatic / tumor panel (PIK3CA, ESR1) from tissue NGS or liquid biopsy (ctDNA). 'mutated' = variant detected; 'negative' = not detected; 'unknown' = panel run but this gene not reported.",
+  "type": "object",
+  "required": ["somatic_testing_done", "genes"],
+  "additionalProperties": true,
+  "properties": {
+    "somatic_testing_done": {"type": "boolean"},
+    "testing_absent_reason": {"type": ["string", "null"]},
+    "evidence_chunk_id": {"type": ["string", "null"]},
+    "assay_type": {"oneOf": [{"type": "string", "enum": ["tissue", "liquid_biopsy", "unknown"]}, {"type": "null"}]},
+    "year_of_testing": {"oneOf": [{"type": "string", "pattern": "^\\d{4}$"}, {"type": "null"}]},
+    "company": {"type": ["string", "null"]},
+    "genes": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["gene", "result"],
+        "additionalProperties": true,
+        "properties": {
+          "gene": {"type": "string"},
+          "result": {"type": "string", "enum": ["mutated", "negative", "unknown"]},
+          "variant": {"type": ["string", "null"]},
+          "verbatim": {"type": ["string", "null"]},
+          "evidence_chunk_id": {"type": ["string", "null"]}
+        }
+      }
+    },
+    "rationale": {"type": "string", "maxLength": 400}
+  }
+}

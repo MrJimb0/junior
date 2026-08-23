@@ -1,0 +1,36 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://jr-pipeline/schemas/source_snapshot.schema.json",
+  "title": "Patient Source Snapshot",
+  "description": "sha256 fingerprint of every input file for a single patient at ingest time. Patient-linked provenance (medium sensitivity).",
+  "allOf": [{"$ref": "artifact_envelope.schema.json"}],
+  "properties": {
+    "artifact_type": {"const": "source_snapshot"},
+    "sensitivity": {"const": "medium"},
+    "stream": {"const": "data"},
+    "payload": {
+      "type": "object",
+      "required": ["patient_id", "source_root", "files"],
+      "additionalProperties": false,
+      "properties": {
+        "patient_id": {"type": "string", "minLength": 1},
+        "source_root": {"type": "string"},
+        "files": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["relpath", "size_bytes", "mtime", "content_hash"],
+            "additionalProperties": false,
+            "properties": {
+              "relpath": {"type": "string"},
+              "size_bytes": {"type": "integer", "minimum": 0},
+              "mtime": {"type": "string", "format": "date-time"},
+              "content_hash": {"type": "string", "pattern": "^sha256:[a-f0-9]{64}$"},
+              "row_count": {"type": ["integer", "null"], "minimum": 0}
+            }
+          }
+        }
+      }
+    }
+  }
+}

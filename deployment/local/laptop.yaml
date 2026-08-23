@@ -1,0 +1,90 @@
+# Laptop config: drives every stage of a run from one file.
+#
+# The stages, in order, are ingest (read the raw chart files), embed (turn each text
+# chunk into an embedding — a numeric vector capturing its meaning), index (build the
+# fast vector-search structure), and extract (find the evidence and run the recipes).
+# Each stage ignores the keys it doesn't use — ingest reads source_root, embed reads
+# encoder, index reads index, extract reads recipes — so the integrity check that
+# detects a config changing mid-run sees an identical config across every stage.
+#
+# The code snapshot that makes a run reproducible is written automatically by the
+# first stage you run; there is no separate step to remember.
+#
+# Env vars are supplied by the `jr` wrapper: JR_RUN_ID, JR_SOURCE_ROOT, JR_DATA_ROOT.
+run_id:      "${oc.env:JR_RUN_ID,null}"
+source_root: "${oc.env:JR_SOURCE_ROOT,null}"
+output_root: "${oc.env:JR_DATA_ROOT,null}"
+
+# The embedding model ("encoder") lives in a local folder — no network access,
+# matching the design rule that no data leaves the machine. These are the same model
+# weights as the copy pinned on the cluster (the model.safetensors file's
+# content hash — a short value computed from its contents — is ea7388…), so a corpus
+# built on one machine lines up exactly with one built on the other.
+encoder:
+  model_id: "./models/embedding/thomas-sounack:BioClinical-ModernBERT-base23APR2026"
+  pooling: mean
+  normalize: true
+  max_tokens: 512
+  dtype: float16        # match the cluster — dtype is compared by the alignment check
+  device: auto          # -> the Mac's built-in GPU (Apple "MPS" backend)
+
+# How each source file is cut into chunks before embedding. Spelled out rather than
+# left to a default because the chunk shape is part of the run's method — two runs
+# that chunked differently are not comparable, and the fingerprint recorded in the
+# sealed bundle has to say which one this was.
+# How many chunks may reach one prompt, whatever a recipe asks for. A recipe's top_n is
+# a research judgement about how much evidence a question needs; this is a fact about the
+# machine, so it lives here and the recipes stay shared and unedited.
+#
+# Chunks run to 512 tokens, so 20 of them is a ~10k-token prompt. 7 is a conservative
+# default meant to run anywhere, NOT a measurement of your machine. As one data point,
+# on a 48 GiB Apple Silicon laptop with a 3B model: 20 chunks peaked at 64 GiB and the
+# run was killed; 7 peaked at 14 GiB and a patient took under two minutes. Measure on
+# your own hardware before raising it, or delete the line on a cluster to let the
+# recipes decide.
+max_chunks_per_prompt: 7
+
+# A model can return a well-formed chunk id for a passage it was never shown. When that
+# happens the step says so and asks again, quoting the ids it did show. Asking the same
+# question again would return the same answer -- decoding is greedy and the response
+# cache is keyed on the prompt -- so the retry only works because the prompt changes.
+# 0 disables it: the ungrounded pointer is nulled and the value fails as unsupported.
+max_provenance_retries: 1
+
+chunker:
+  kind: token_window
+  overlap: 128
+
+# Which source column holds each piece of chart metadata (who wrote a document, when,
+# what kind, which specialty). Recipes filter evidence by these names, so a site whose
+# export spells a column differently maps it here — names given here are tried before
+# the generic defaults, and matching ignores case. The bundled examples already use
+# recognizable names, so nothing is set; deployment/example_site/example_export_column_map.yaml is the
+# worked example mapping, and a run warns per file for any field it could not find a column for.
+#
+# chart_columns_file: deployment/example_site/example_export_column_map.yaml   # your institution's map
+# chunk_metadata_columns:                    # or override one file for an odd cohort
+#   clinical_note:
+#     author: AUTHOR_NM
+
+# The search index: HNSW (via the hnswlib library) is the approximate-nearest-
+# neighbor structure that makes vector search fast — it finds the chunks most similar
+# to a query without comparing against every chunk one by one.
+index:
+  kind: hnswlib
+  M: 32
+  ef_construction: 200
+  space: ip
+  random_seed: 100
+
+# Which variables the extract stage pulls out of each chart. The names are folder
+# names under recipes_root; each recipe owns its own retrieval, prompt, and output
+# schema, which is why retrieval is not a separate stage here.
+recipes:
+  - date_of_birth
+recipes_root: ./var_extraction_recipes
+
+# The language model extract is allowed to call. This file lists the 3-billion-
+# parameter Qwen sitting in models/, loaded from disk with no network access — the
+# denylist blocks public consumer endpoints before a run can reach them.
+allowlist_path: ./deployment/local/llm_allowlist_local3b.yaml

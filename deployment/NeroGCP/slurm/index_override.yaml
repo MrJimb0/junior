@@ -1,0 +1,25 @@
+# Production settings for building the fast similarity-search index on Nero.
+# These tune hnswlib, the approximate-nearest-neighbor index that makes "find
+# the most similar text chunks" fast. Self-contained — anything not set here
+# uses the code defaults in
+# pipeline_steps/step_3_build_vector_index/build_index.py.
+
+run_id: "${oc.env:JR_RUN_ID,null}"
+output_root: "${oc.env:JR_OUT_ROOT,null}"
+
+index:
+  kind: hnswlib
+  # How many neighbor links each vector keeps in the graph. Higher = more of the
+  # truly-closest matches get found (better recall), at the cost of more memory.
+  # Recommended range 16-64; 32 is a good default.
+  M: 32
+  # How hard the build works to place each vector well. Higher = a higher-quality
+  # index (better matches at search time), but a slower build.
+  ef_construction: 200
+  # How similarity between two vectors is measured. "ip" = inner product, which
+  # is correct when vectors are length-normalized (the encoder default here).
+  # Switch to "cosine" or "l2" only if you change the encoder normalization.
+  space: ip
+  # Fixed random seed so index builds are reproducible. The exact value doesn't
+  # matter — only that it never changes between runs.
+  random_seed: 100

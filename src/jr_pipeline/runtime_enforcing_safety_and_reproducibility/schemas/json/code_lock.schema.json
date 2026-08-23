@@ -1,0 +1,22 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://jr-pipeline/schemas/code_lock.schema.json",
+  "title": "Code Lock",
+  "description": "Anchor document stored at out/<run_id>/code/code.lock.json. Exposes the code_lock_hash consumed by every data-side artifact. Written after the rest of code/ is sealed.",
+  "allOf": [{"$ref": "artifact_envelope.schema.json"}],
+  "properties": {
+    "artifact_type": {"const": "code_lock"},
+    "sensitivity": {"const": "low"},
+    "stream": {"const": "code"},
+    "payload": {
+      "type": "object",
+      "required": ["run_id", "code_lock_hash", "sealed_at"],
+      "additionalProperties": false,
+      "properties": {
+        "run_id": {"type": "string"},
+        "code_lock_hash": {"type": "string", "pattern": "^sha256:[a-f0-9]{64}$"},
+        "sealed_at": {"type": "string", "format": "date-time"}
+      }
+    }
+  }
+}

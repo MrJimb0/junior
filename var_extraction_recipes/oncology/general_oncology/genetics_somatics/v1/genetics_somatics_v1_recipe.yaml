@@ -1,0 +1,52 @@
+name: genetics_somatics
+version: v1
+collection: oncology
+
+# What this recipe does: pull the patient's SOMATIC (tumor-acquired, not inherited)
+# molecular results out of the chart and list one result per gene tested.
+#
+# Same shape as the germline
+# recipe but for the SOMATIC / tumor panel. Two treatment-relevant genes (PIK3CA,
+# ESR1) reported from tumor-tissue sequencing (NGS = next-generation sequencing) or
+# a blood-based "liquid biopsy" (ctDNA = circulating tumor DNA). A BM25 pass plus
+# newest-chart coverage protects late liquid-biopsy results; one entry per panel gene. A
+# finalize step with no language-model call passes the panel result through unchanged
+# and attaches the supporting evidence pointer for the top-level somatic_testing_done
+# determination. Enumeration archetype (the job is to LIST items, here one per gene).
+
+archetype: enumeration
+
+roles:
+  clinical_notes:      { source_file: clinical_note.csv }
+  pathology_documents: { source_file: pathology_report.csv }
+
+output_schema: genetics_somatics_v1_output_schema.json
+
+llm:
+  model: local_qwen
+  max_tokens: 1500
+
+reranking:
+  top_n: 20
+  chronological_order: oldest_first
+
+depends_on: []
+
+steps:
+  # Keep the top 10 BM25 hits plus up to 10 additional newest chunks.
+  - id: extract_somatic
+    kind: retrieve_and_prompt
+    retrieval:
+      kind: bm25
+      query: "somatic tumor mutation NGS next generation sequencing liquid biopsy circulating tumor DNA ctDNA PIK3CA ESR1 Guardant FoundationOne Tempus Caris variant allele fraction detected not detected"
+      k: 10
+      include_recent: 10
+    prompt: prompts/genetics_somatics_v1_extract.md
+
+  # Attach the supporting-evidence pointer for the top-level determination to the
+  # chunks that were actually searched (read-fallback = if the model did not cite a
+  # specific chunk, fall back to the ones it was shown). Passes the panel data through
+  # unchanged, so the list-of-genes result is not altered.
+  - id: finalize
+    kind: python
+    module: genetics_somatics_v1_python_helper.finalize

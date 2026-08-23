@@ -1,0 +1,102 @@
+name: date_of_death
+version: v1
+collection: basic
+
+# Read structured demographics,
+# keyword-search for an explicit death, then separately summarize end-of-life,
+# performance-status, and recent-chart-activity evidence before holistic adjudication.
+# Archetype (the reusable recipe shape this follows):
+# temporal_anchor with a classification side (vital_status). An explicit date is
+# preserved over the trajectory inference; pass 3 only sets vital_status, never a date.
+
+archetype: temporal_anchor
+
+roles:
+  demographics_table: { source_file: demographics.csv }
+  clinical_notes:     { source_file: clinical_note.csv }
+
+output_schema: date_of_death_v1_output_schema.json
+
+llm:
+  model: local_qwen
+  max_tokens: 1024
+
+
+reranking:
+  top_n: 20
+  chronological_order: newest_first
+  source_priority:
+    demographics.csv: 1.0
+    clinical_note.csv: 0.6
+
+depends_on: [date_of_diagnosis, stage]
+
+steps:
+  # Pass 1 — structured demographics: an explicit death-date field only.
+  - id: demographics_grab
+    kind: retrieve_and_prompt
+    retrieval:
+      # direct_parquet = read the whole structured table directly (no search needed,
+      # since the demographics row already holds the death-date field).
+      kind: direct_parquet
+      table: demographics
+    prompt: prompts/date_of_death_v1_demographics.md
+    stop_if: "data is not none and data.get('date_of_death') is not none"
+
+  # Pass 2 — keyword-search clinical notes for an explicit death statement + date.
+  # (hybrid = combine keyword search with vector/meaning search; k = how many top
+  # chunks to retrieve and show the model.)
+  - id: death_search
+    kind: retrieve_and_prompt
+    retrieval:
+      kind: bm25
+      query: "died death expired deceased death certificate hospice comfort care passed away pronounced dead autopsy obituary funeral"
+      k: 10
+      source_file: clinical_note.csv
+    prompt: prompts/date_of_death_v1_death_search.md
+    stop_if: "data is not none and data.get('date_of_death') is not none"
+
+  # Pass 3A — end-of-life trajectory evidence plus recent-chart coverage.
+  - id: eol_trajectory
+    kind: retrieve_and_prompt
+    retrieval:
+      kind: bm25
+      query: "hospice enrolled in hospice hospice referral hospice consult comfort care CMO palliative care terminal actively dying imminent death goals of care GOC DNR DNI DNAR withdrawal of care transitioned to comfort end of life EOL home hospice inpatient hospice"
+      k: 10
+      include_recent: 5
+      source_file: clinical_note.csv
+    prompt: prompts/date_of_death_v1_eol_trajectory.md
+
+  # Pass 3B — functional decline / performance status.
+  - id: performance_status
+    kind: retrieve_and_prompt
+    retrieval:
+      kind: bm25
+      query: "ECOG performance status PS Karnofsky KPS PPS palliative performance bedbound bedridden wheelchair bound requires assistance ADL poor oral intake failure to thrive cachexia somnolent drowsy delirium"
+      k: 10
+      include_recent: 5
+      source_file: clinical_note.csv
+    prompt: prompts/date_of_death_v1_performance_status.md
+
+  # Pass 3C — newest chart activity, treatment, transfer, or follow-up evidence.
+  - id: recent_activity
+    kind: retrieve_and_prompt
+    retrieval:
+      kind: bm25
+      query: "follow up return clinic next visit treatment infusion prescription transferred care relocation surveillance no evidence of disease remission last seen"
+      k: 10
+      include_recent: 5
+      source_file: clinical_note.csv
+    prompt: prompts/date_of_death_v1_recent_activity.md
+
+  # Pass 3D — holistic adjudication over the structured evidence summaries. This pass
+  # cannot invent a date of death.
+  - id: vital_status_inference
+    kind: llm_only
+    prompt: prompts/date_of_death_v1_vital_status.md
+
+  # Finalize — preserve explicit date (passes 1-2), take the latest definite vital
+  # status; never let inference invent a date. Pure Python.
+  - id: finalize
+    kind: python
+    module: date_of_death_v1_python_helper.merge_passes

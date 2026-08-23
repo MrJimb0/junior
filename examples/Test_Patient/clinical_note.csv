@@ -1,0 +1,220 @@
+patient_id,date,age,type,accession_number,title,author,linked_author,pat_enc_csn_id,order_proc_id,text
+9999999,2025-10-15T11:00:00,68.501,Progress Notes,,Medical Oncology Consult - Treatment Planning,"DICKERSON, JAMES","DICKERSON, JAMES",999000006,,"MEDICAL ONCOLOGY CONSULTATION NOTE
+
+Patient: BASSETT, KITTY (MRN 9999999)
+Date of Service: 2025-10-15
+Provider: James Dickerson, MD - Medical Oncology
+Reason for Consultation: Newly biopsy-confirmed metastatic breast carcinoma; treatment planning.
+
+SUBJECTIVE:
+
+History of Present Illness:
+Ms. Bassett is a 68-year-old postmenopausal woman with a history of stage IIA invasive ductal carcinoma of the right breast, now presenting with biopsy-confirmed hepatic and osseous metastatic recurrence.
+
+Her breast cancer history began in January 2024. She was asymptomatic and had no palpable lump. A routine screening mammogram on 2024-01-15 demonstrated a 3.7 cm irregular, spiculated mass in the upper-outer quadrant of the right breast with associated pleomorphic calcifications. Diagnostic mammography and targeted right breast and axillary ultrasound the same day confirmed a 3.7 x 3.2 cm irregular hypoechoic mass at the 10 o'clock position, 4 cm from the nipple, with posterior acoustic shadowing, assessed as BI-RADS 5. No morphologically abnormal right axillary lymph nodes were seen on ultrasound, and she was therefore clinically node negative at presentation.
+
+Ultrasound-guided core needle biopsy of the right breast mass was performed on 2024-01-22 and demonstrated invasive ductal carcinoma, no special type, Nottingham grade 2. Biomarkers on the core biopsy were estrogen receptor positive at 95% with strong intensity, progesterone receptor positive at 80% with strong intensity, and HER2 negative at 1+ by immunohistochemistry. This established her original diagnosis of breast cancer on 2024-01-22.
+
+Bilateral breast MRI on 2024-01-29 showed the known index lesion measuring 3.6 cm with no additional ipsilateral foci, no contralateral disease and no internal mammary or axillary adenopathy. Given her age at diagnosis and tumor size, she was referred for germline genetic evaluation. A multigene hereditary cancer panel drawn on 2024-01-29 and resulted 2024-02-02 covering BRCA1, BRCA2, PALB2, CHEK2, ATM, TP53, PTEN, CDH1, STK11, NF1, BARD1, RAD51C and RAD51D identified NO PATHOGENIC OR LIKELY PATHOGENIC VARIANTS. Testing was performed at Invitae. A variant of uncertain significance in ATM was reported and, per the laboratory and our genetic counselor, is not clinically actionable.
+
+She underwent right partial mastectomy (lumpectomy) with sentinel lymph node biopsy on 2024-02-15. Final pathology showed a 3.8 cm invasive ductal carcinoma, no special type, Nottingham grade 2, with negative margins (closest superior margin 0.4 cm), no lymphovascular invasion, and three negative sentinel lymph nodes. Final staging was pT2 pN0(sn) cM0, AJCC 8th edition anatomic stage group IIA. Receptors on the resection confirmed ER 95% positive, PR 80% positive, HER2 1+ negative, with a Ki-67 of 15%.
+
+A 21-gene recurrence score assay performed on the surgical specimen returned a Recurrence Score of 18, placing her in the low-risk group for a postmenopausal, node-negative patient. On that basis, adjuvant chemotherapy was not recommended and she proceeded to local radiation and endocrine therapy alone.
+
+She completed adjuvant whole-breast radiation to the right breast from 2024-03-18 through 2024-04-26, receiving 40.05 Gy in 15 fractions with a 10 Gy boost to the lumpectomy cavity. She began adjuvant anastrozole 1 mg daily on 2024-05-06 and has taken it continuously since, with good adherence and tolerable arthralgias managed with exercise and acetaminophen.
+
+Surveillance was uneventful through 2025. Her most recent prior imaging, a CT of the chest, abdomen and pelvis on 2025-03-22, showed no evidence of disease.
+
+Over approximately the past six to eight weeks she has noted increasing right upper quadrant fullness and discomfort, early satiety, an unintentional 8 lb weight loss and progressive fatigue limiting her usual gardening. Routine laboratory work in September showed a rising alkaline phosphatase. A CT of the chest, abdomen and pelvis on 2025-09-30 demonstrated three new hypoenhancing hepatic lesions, the dominant one 2.4 cm in segment VI, together with a new 1.4 cm sclerotic lesion in the T9 vertebral body. There was no evidence of locoregional recurrence in the right breast or right axilla. MRI of the brain on 2025-10-02 was negative for intracranial metastatic disease.
+
+CT-guided core needle biopsy of the dominant segment VI hepatic lesion was performed on 2025-10-10, with final pathology resulted 2025-10-13: metastatic adenocarcinoma consistent with a breast primary, GATA3 positive, CK7 positive, CK20 negative, TTF-1 negative. Repeat receptor testing on the metastatic site showed ER positive at 90% with strong intensity, PR NEGATIVE at less than 1%, and HER2 negative at 0 by immunohistochemistry, with a Ki-67 of 35%. This represents loss of progesterone receptor expression and a rise in proliferation index relative to her 2024 primary.
+
+She has no fever, no jaundice, no bone pain and no neurologic symptoms. She lives independently with her husband and remains fully ambulatory.
+
+Review of Systems:
+Constitutional: Positive for fatigue and 8 lb unintentional weight loss. No fever or night sweats.
+Gastrointestinal: Positive for right upper quadrant discomfort and early satiety. No nausea, vomiting, jaundice or change in bowel habit.
+Musculoskeletal: Chronic anastrozole-associated arthralgias. No focal back pain, no point tenderness over the thoracic spine.
+Neurologic: No headache, visual change, weakness, numbness or seizure.
+Respiratory and Cardiovascular: No dyspnea, cough, chest pain or palpitations.
+All other systems reviewed and negative.
+
+Past Medical History:
+1. Invasive ductal carcinoma of the right breast, stage IIA, diagnosed 2024-01-22; ER positive, PR positive, HER2 negative.
+2. Hypertension, well controlled.
+3. Hyperlipidemia.
+4. Osteopenia, on surveillance DEXA; last T-score -1.8 at the lumbar spine (2024).
+5. Former tobacco use, quit 2010.
+
+Past Surgical History:
+1. Right partial mastectomy with sentinel lymph node biopsy, 2024-02-15.
+2. Cholecystectomy, 2003.
+3. Total abdominal hysterectomy for benign fibroids, 2001; ovaries retained at that time.
+
+Family History:
+Mother with breast cancer diagnosed at age 74, deceased at 81 of unrelated causes. No ovarian, pancreatic or prostate cancer in first- or second-degree relatives. Father with coronary artery disease. One sister, age 64, healthy, has undergone screening and is unaffected. Germline testing in the patient was negative as above.
+
+Social History:
+Retired schoolteacher. Married, lives with her husband in Palo Alto. Former smoker, approximately 15 pack-years, started 1975 and quit 2010. Occasional alcohol, roughly two glasses of wine per week. No recreational drug use. Menopause occurred naturally at age 51 in 2008; she has had no menstrual periods since and has never used postmenopausal hormone replacement therapy. She is therefore definitively postmenopausal.
+
+Medications:
+1. Anastrozole 1 mg orally daily (adjuvant, since 2024-05-06).
+2. Lisinopril 10 mg orally daily.
+3. Atorvastatin 20 mg orally daily.
+4. Calcium carbonate with vitamin D, twice daily.
+5. Acetaminophen 500 mg as needed for arthralgias.
+
+OBJECTIVE:
+
+Vital signs: Temperature 36.8 C, blood pressure 128/76, heart rate 78, respirations 16, oxygen saturation 98% on room air. Height 165 cm, weight 65.8 kg, BMI 24.2. ECOG performance status 1.
+
+Physical Examination:
+General: Well-appearing woman in no acute distress.
+HEENT: No scleral icterus. Oropharynx clear.
+Breasts: Right breast with a well-healed lumpectomy scar in the upper-outer quadrant and expected post-radiation changes. No palpable mass, skin change or nipple discharge. Left breast unremarkable. No palpable axillary, supraclavicular or cervical adenopathy bilaterally.
+Cardiovascular: Regular rate and rhythm, no murmur.
+Respiratory: Clear to auscultation bilaterally.
+Abdomen: Soft, mild tenderness in the right upper quadrant. Liver edge palpable 3 cm below the costal margin. No ascites.
+Musculoskeletal: No tenderness to palpation over the thoracic or lumbar spine.
+Neurologic: Alert and oriented. Cranial nerves intact. Strength 5/5 throughout. No focal deficit.
+Extremities: No edema. No lymphedema of the right arm.
+
+Recent Labs (2025-10-15):
+WBC 6.2 K/uL, hemoglobin 11.8 g/dL, platelets 244 K/uL, ANC 3.9 K/uL.
+Sodium 138, potassium 4.1, creatinine 0.82 mg/dL, calculated creatinine clearance 74 mL/min.
+Total bilirubin 0.9 mg/dL (normal), AST 68 U/L (elevated), ALT 74 U/L (elevated), ALKALINE PHOSPHATASE 312 U/L (markedly elevated, up from 96 U/L in March 2025), albumin 3.6 g/dL.
+INR 1.0. Calcium 9.4 mg/dL.
+CA 15-3 88 U/mL (elevated).
+
+Recent Imaging:
+CT chest, abdomen and pelvis 2025-09-30: three new hepatic metastases, dominant segment VI lesion 2.4 cm; new 1.4 cm sclerotic T9 vertebral lesion; no locoregional recurrence.
+MRI brain 2025-10-02: no intracranial metastatic disease.
+
+Recent Pathology:
+Liver, segment VI core needle biopsy 2025-10-10 (SP-25-088117), resulted 2025-10-13: metastatic adenocarcinoma consistent with breast primary. ER 90% positive, PR negative, HER2 0 negative, Ki-67 35%, GATA3 positive.
+
+ASSESSMENT:
+
+68-year-old postmenopausal woman with RECURRENT METASTATIC BREAST CARCINOMA, hormone receptor positive and HER2 negative, involving liver and bone, diagnosed on liver biopsy 2025-10-10.
+
+1. Her original diagnosis was stage IIA invasive ductal carcinoma of the right breast on 2024-01-22, definitively treated with breast-conserving surgery on 2024-02-15, adjuvant whole-breast radiation, and adjuvant anastrozole.
+2. The metastatic recurrence was diagnosed on 2025-10-10, approximately 20 months after her original diagnosis and while on adjuvant anastrozole. This constitutes progression on a non-steroidal aromatase inhibitor in the adjuvant setting, which informs the endocrine options available to her.
+3. The metastatic biopsy shows loss of progesterone receptor expression (PR 80% positive on the 2024 primary, now negative) with retained strong ER positivity and a rise in Ki-67 from 15% to 35%. Per guideline, treatment decisions follow the receptor status of the biopsied metastatic site; she remains a candidate for endocrine-directed therapy on the basis of retained ER positivity.
+4. She has symptomatic, rapidly accumulating hepatic disease with a markedly rising alkaline phosphatase and transaminitis, and a liver edge palpable 3 cm below the costal margin. This is a visceral presentation at risk of hepatic compromise.
+5. Germline multigene panel testing was negative in 2024, so she is not a candidate for a PARP inhibitor on a germline BRCA basis.
+6. Osseous metastatic disease at T9 without pathologic fracture or cord compromise, warranting a bone-modifying agent.
+
+PLAN:
+
+1. SYSTEMIC THERAPY. Although endocrine therapy plus a CDK4/6 inhibitor is the usual first choice in hormone receptor positive, HER2 negative metastatic breast cancer, her rapidly progressive symptomatic hepatic disease with rising transaminases and alkaline phosphatase warrants an initial cytotoxic approach for rapid disease control. We will begin first-line chemotherapy with GEMCITABINE 1250 mg/m2 IV on days 1 and 8 plus PACLITAXEL 175 mg/m2 IV on day 1, every 21 days, starting 2025-10-25. Discussed alopecia, neuropathy, myelosuppression, hypersensitivity and fatigue; premedication per protocol.
+2. Hold anastrozole while on cytotoxic therapy.
+3. On achieving best response, plan to transition to endocrine therapy plus a CDK4/6 inhibitor as maintenance. Fulvestrant with a CDK4/6 inhibitor is the preferred sequence given progression on a non-steroidal aromatase inhibitor.
+4. BONE-DIRECTED THERAPY. Begin zoledronic acid 4 mg IV every 12 weeks for osseous metastatic disease, with dental clearance obtained prior to the first dose. Continue calcium and vitamin D.
+5. Port placement scheduled prior to cycle 1.
+6. Restaging CT of the chest, abdomen and pelvis after four cycles, anticipated January 2026. Repeat CA 15-3 and liver function tests with each cycle.
+7. Supportive care: antiemetics per protocol, growth factor support if febrile neutropenia occurs, referral to oncology nutrition for weight loss, and palliative care co-management for symptom support.
+8. Genetic counseling follow-up not indicated at this time given the negative panel; the ATM variant of uncertain significance was reviewed with the patient and is not actionable.
+9. Goals of care discussed. The patient understands this is an incurable but treatable disease and that the aim of treatment is disease control, symptom relief and quality of life. She wishes to proceed with treatment as outlined. Approximately 45 minutes spent in face-to-face counseling and coordination of care, of which more than half was spent in counseling.
+
+Electronically signed by: James Dickerson, MD, Medical Oncology, 2025-10-15 11:00
+"
+9999999,2026-01-15T09:30:00,68.753,Progress Notes,,Medical Oncology Follow-Up - Restaging Review,"SMITH, MAGGIE","SMITH, MAGGIE",999000010,,"MEDICAL ONCOLOGY FOLLOW-UP NOTE
+
+Patient: BASSETT, KITTY (MRN 9999999)
+Date of Service: 2026-01-15
+Provider: Maggie Shaw, MD - Medical Oncology
+Reason for Visit: Restaging review after four cycles of first-line chemotherapy for metastatic breast carcinoma.
+
+SUBJECTIVE:
+
+Interval History:
+Ms. Bassett is a 68-year-old postmenopausal woman with recurrent metastatic hormone receptor positive, HER2 negative invasive ductal carcinoma of the right breast, involving liver and bone, diagnosed by liver biopsy on 2025-10-10. Her original breast cancer was a stage IIA invasive ductal carcinoma of the right breast diagnosed 2024-01-22 and treated with right partial mastectomy and sentinel lymph node biopsy on 2024-02-15, adjuvant whole-breast radiation, and adjuvant anastrozole.
+
+She began first-line gemcitabine 1250 mg/m2 on days 1 and 8 with paclitaxel 175 mg/m2 on day 1 every 21 days on 2025-10-25 and has now completed four cycles, with cycle 2 on 2025-11-15, cycle 3 on 2025-12-06 and cycle 4 on 2025-12-27. Anastrozole was held at the start of cytotoxic therapy and she has not resumed it.
+
+Clinically she is substantially improved. The right upper quadrant discomfort and early satiety that brought her to attention in September have resolved entirely. Her appetite has returned and she has regained 2.1 kg since starting treatment. Her energy is better and she has resumed light gardening and walking approximately two miles daily.
+
+Treatment has been tolerated reasonably well. She developed complete alopecia after cycle 2, which she anticipated and manages with a wig. She reports grade 1 peripheral neuropathy, described as intermittent tingling in the fingertips and toes without functional impairment, no difficulty with buttons or handwriting, and no gait instability. The day 8 gemcitabine dose of cycle 3 was held for grade 2 neutropenia with an ANC of 1.2, which recovered without growth factor support; subsequent counts have been adequate and no further doses have been held. She has had no fever, no infection and no hospitalization.
+
+She received zoledronic acid 4 mg IV on 2025-10-25 and again on 2026-01-05, following dental clearance. She has had no jaw pain and no dental complications.
+
+Review of Systems:
+Constitutional: Fatigue improved from baseline. Weight increasing. No fever or night sweats.
+Gastrointestinal: Right upper quadrant discomfort resolved. Appetite good. No nausea, vomiting, jaundice or constipation.
+Neurologic: Grade 1 sensory neuropathy in fingertips and toes as above. No headache, visual change, weakness or seizure.
+Musculoskeletal: No back pain, no point tenderness, no new bone pain.
+Integumentary: Complete alopecia. No rash, no nail change.
+Respiratory and Cardiovascular: No dyspnea, cough, chest pain, palpitations or leg swelling.
+All other systems reviewed and negative.
+
+Past Medical History (interval-updated):
+1. Recurrent metastatic invasive ductal carcinoma of the right breast, ER positive, PR negative on the metastatic biopsy, HER2 negative; liver and bone metastases diagnosed 2025-10-10.
+2. Invasive ductal carcinoma of the right breast, stage IIA, originally diagnosed 2024-01-22.
+3. Hypertension, well controlled.
+4. Hyperlipidemia.
+5. Osteopenia with osseous metastatic disease; on zoledronic acid since 2025-10-25.
+6. Chemotherapy-induced peripheral neuropathy, grade 1, new since 2025-12.
+7. Former tobacco use, quit 2010.
+
+Current Medications:
+1. Gemcitabine 1250 mg/m2 IV days 1 and 8 every 21 days (cycle 4 completed 2025-12-27).
+2. Paclitaxel 175 mg/m2 IV day 1 every 21 days (cycle 4 completed 2025-12-27).
+3. Zoledronic acid 4 mg IV every 12 weeks.
+4. Lisinopril 10 mg orally daily.
+5. Atorvastatin 20 mg orally daily.
+6. Calcium carbonate with vitamin D twice daily.
+7. Ondansetron 8 mg orally as needed for nausea.
+8. Anastrozole - HELD since 2025-10-25.
+
+OBJECTIVE:
+
+Vital signs: Temperature 36.6 C, blood pressure 124/74, heart rate 72, respirations 14, oxygen saturation 99% on room air. Weight 67.9 kg, up from 65.8 kg at consultation. BMI 24.9. ECOG performance status 1.
+
+Physical Examination:
+General: Well-appearing, comfortable, wearing a wig. No distress.
+HEENT: No scleral icterus. Oral mucosa intact without mucositis.
+Breasts: Right breast with well-healed lumpectomy scar and stable post-radiation change. No palpable mass or skin change. Left breast unremarkable. No axillary, supraclavicular or cervical adenopathy.
+Cardiovascular: Regular rate and rhythm. No murmur. No peripheral edema.
+Respiratory: Clear to auscultation bilaterally.
+Abdomen: Soft, NON-TENDER. Liver edge no longer palpable below the costal margin, improved from 3 cm at consultation. No ascites.
+Musculoskeletal: No thoracic or lumbar spine tenderness. No focal bone tenderness.
+Neurologic: Alert and oriented. Cranial nerves intact. Strength 5/5 throughout. Light touch mildly diminished in the fingertips and toes bilaterally in a stocking-glove distribution. Gait normal. Romberg negative.
+
+Today's Labs (2026-01-15):
+WBC 4.4 K/uL, hemoglobin 10.9 g/dL, platelets 198 K/uL, ANC 2.6 K/uL.
+Sodium 139, potassium 4.0, creatinine 0.79 mg/dL.
+Total bilirubin 0.6 mg/dL, AST 31 U/L (normalized from 68), ALT 28 U/L (normalized from 74), ALKALINE PHOSPHATASE 142 U/L (markedly improved from 312), albumin 4.0 g/dL.
+Calcium 9.2 mg/dL. Magnesium 1.9 mg/dL.
+CA 15-3 31 U/mL, improved from 88 U/mL at consultation.
+
+Restaging Imaging (2026-01-12):
+CT chest, abdomen and pelvis with IV contrast: PARTIAL RESPONSE. All three hepatic metastases decreased in size. The dominant segment VI lesion measures 1.3 cm, down from 2.4 cm; the segment VIII lesion measures 0.8 cm, down from 1.6 cm; the segment IVa lesion is no longer measurable. Sum of target lesion diameters decreased from 4.0 cm to 2.1 cm, a 48% decrease, meeting RECIST 1.1 criteria for partial response. The T9 sclerotic osseous metastasis is unchanged in size and more densely sclerotic, consistent with treatment effect. No new site of disease. No locoregional recurrence in the right breast or axilla.
+
+Pertinent Pending/Resulted Studies:
+- Echocardiogram 2025-10-20: left ventricular ejection fraction 62%, normal.
+- Dental clearance 2025-10-22: completed, no active disease.
+- DEXA scan: due, to be scheduled.
+- No pending studies at this time.
+
+ASSESSMENT:
+
+68-year-old postmenopausal woman with recurrent metastatic hormone receptor positive, HER2 negative breast carcinoma involving liver and bone, with a PARTIAL RESPONSE after four cycles of first-line gemcitabine and paclitaxel.
+
+1. Excellent disease response. Radiographic partial response by RECIST 1.1 with a 48% decrease in target lesion sum, accompanied by normalization of transaminases, a marked fall in alkaline phosphatase from 312 to 142, a fall in CA 15-3 from 88 to 31, resolution of right upper quadrant symptoms, and weight gain. The visceral compromise that drove the decision to start with cytotoxic therapy has resolved.
+2. Toxicity is manageable but cumulative. Grade 1 sensory neuropathy is now present and will progress with continued taxane exposure. This is the principal argument for transitioning to maintenance endocrine therapy rather than continuing cytotoxic treatment to progression.
+3. Endocrine options. She progressed on adjuvant anastrozole, a non-steroidal aromatase inhibitor, which makes fulvestrant the preferred endocrine backbone rather than rechallenge with an aromatase inhibitor. Her metastatic biopsy retains strong estrogen receptor positivity at 90%, so she remains an appropriate candidate for endocrine-directed maintenance despite the loss of progesterone receptor expression.
+4. Germline testing was negative in 2024, so a PARP inhibitor is not indicated.
+5. Osseous disease stable and showing treatment effect on the bone-modifying agent.
+
+PLAN:
+
+1. Complete two further cycles of gemcitabine and paclitaxel, cycles 5 and 6, to consolidate response, provided neuropathy does not progress beyond grade 1. Reassess neuropathy at each visit and reduce or discontinue paclitaxel if it reaches grade 2.
+2. Following cycle 6, TRANSITION TO MAINTENANCE ENDOCRINE THERAPY with fulvestrant 500 mg intramuscularly on days 1, 15 and 29 and then monthly, combined with a CDK4/6 inhibitor. Discussed ribociclib with attention to QTc and hepatic monitoring; baseline ECG and interval liver function testing will be required.
+3. Do not resume anastrozole.
+4. Continue zoledronic acid 4 mg IV every 12 weeks; next dose due 2026-03-30. Continue calcium and vitamin D. Schedule DEXA.
+5. Restaging CT of the chest, abdomen and pelvis after cycle 6, anticipated March 2026, and every three months thereafter on maintenance. Continue CA 15-3 and liver function tests with each cycle.
+6. Supportive care: continue antiemetics as needed; oncology nutrition follow-up given weight recovery; continue palliative care co-management.
+7. Return to clinic in three weeks for cycle 5, sooner for fever, jaundice, worsening neuropathy or new bone pain. The patient verbalized understanding of the plan and of the reasons for transitioning to endocrine maintenance after cycle 6.
+
+Electronically signed by: Maggie Shaw, MD, Medical Oncology, 2026-01-15 09:30
+"

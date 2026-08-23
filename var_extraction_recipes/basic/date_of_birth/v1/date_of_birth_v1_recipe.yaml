@@ -1,0 +1,57 @@
+name: date_of_birth
+version: v1
+collection: basic
+archetype: point_fact
+output_schema: date_of_birth_v1_output_schema.json
+
+llm:
+  model: local_qwen   # a model name from the institutional allowlist (the approved
+                      # list of models this pipeline may call). The dev allowlist
+                      # (deployment/local/llm_allowlist.yaml) maps this name to a model
+                      # that runs on this machine (Qwen, loaded in-process via the
+                      # HuggingFace model library). Production allowlists swap it for an
+                      # approved hospital API endpoint covered by a data agreement (BAA).
+  max_tokens: 512
+
+depends_on: []
+
+steps:
+  # 1. Look for a date of birth (DOB) in the structured demographics table first.
+  #    If the model returns a real (non-null) date, stop here -- we are done.
+  - id: demographics_grab
+    kind: retrieve_and_prompt
+    retrieval:
+      kind: direct_parquet   # read the table directly
+      table: demographics
+    prompt: prompts/date_of_birth_v1_demographics.md
+    stop_if: "data is not none and data.get('date_of_birth') is not none"
+
+  # 2. Fallback: keyword-search the whole chart for a stated DOB. The query terms feed
+  #    a hybrid search (BM25 keyword search + meaning/vector search); k: 5 keeps the 5
+  #    best-matching chunks. Stop if this finds a date.
+  - id: bm25_explicit
+    kind: retrieve_and_prompt
+    retrieval:
+      kind: hybrid
+      query: "date of birth dob born birthday"
+      k: 5
+    prompt: prompts/date_of_birth_v1_bm25.md
+    stop_if: "data is not none and data.get('date_of_birth') is not none"
+
+  # 3. Fallback: search specifically for an explicit patient age and a document/visit
+  #    date. This needs a BM25 pass of its own because the stated-DOB query above
+  #    often does not retrieve age-bearing notes.
+  - id: age_date
+    kind: retrieve_and_prompt
+    retrieval:
+      kind: bm25
+      query: "age yo y.o. year-old years old date seen on"
+      k: 3
+    prompt: prompts/date_of_birth_v1_age_date.md
+
+  # 4. Last resort: if no DOB was stated anywhere, estimate the birth year from the
+  #    patient age and document date extracted by the dedicated fallback pass.
+  #    Pure Python, no model call.
+  - id: estimate
+    kind: python
+    module: date_of_birth_v1_python_helper.estimate_from_age

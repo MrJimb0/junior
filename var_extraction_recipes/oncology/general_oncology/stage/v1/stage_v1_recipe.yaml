@@ -1,0 +1,82 @@
+name: stage
+version: v1
+collection: oncology
+
+# What this recipe does: capture the cancer stage AT THE ORIGINAL DIAGNOSIS, for any
+# cancer site, using the AJCC TNM staging system (T = tumor, N = nodes, M = metastasis;
+# AJCC is the standard staging body). The generic stage + TNM live here; breast-specific
+# receptors and detailed breast pathology live in the breast_receptors recipe.
+# Anchored on the FIRST diagnosis — a later recurrence or metastatic progression does
+# NOT change the original stage (that timeline lives in date_of_diagnosis /
+# treatment_lines).
+
+archetype: classification_adjudication
+
+roles:
+  pathology_documents: { source_file: pathology_report.csv }
+  clinical_notes:      { source_file: clinical_note.csv }
+
+output_schema: stage_v1_output_schema.json
+
+llm:
+  model: local_qwen
+  max_tokens: 1024
+
+
+# reranking: after retrieval, re-order the candidate chunks by how much we trust each
+# source. Pathology reports are the gold standard for stage, so they get the highest
+# weight (1.0); clinical notes count but less (0.6).
+reranking:
+  top_n: 20
+  chronological_order: oldest_first
+  source_priority:
+    pathology_report.csv: 1.0
+    clinical_note.csv: 0.6
+
+depends_on: [date_of_diagnosis]
+
+steps:
+  # Pass 1 — pathologic TNM (the stage CONFIRMED by examining the removed specimen,
+  # prefixed "p") from the EARLIEST cancer-removal surgery (original diagnosis). Ignore
+  # biopsies of a recurrence or a metastatic site, and ignore post-treatment specimens
+  # (ypTNM = stage after neoadjuvant therapy, prefixed "yp"). Searches only the
+  # pathology reports. "hybrid" = keyword + meaning-based search; k: 12 = pull the 12
+  # best-matching text chunks.
+  - id: pathologic_tnm
+    kind: retrieve_and_prompt
+    retrieval:
+      kind: hybrid
+      query: "pathologic stage pT pN pM AJCC TNM lymph nodes positive tumor size invasive carcinoma resection lobectomy mastectomy margins original diagnosis"
+      k: 20
+      source_file: pathology_report.csv
+    prompt: prompts/stage_v1_pathologic_tnm.md
+
+  # Pass 2 — clinical TNM (the stage assigned BEFORE surgery from exam/imaging,
+  # prefixed "c") plus the overall AJCC stage group AT ORIGINAL DIAGNOSIS, from the
+  # clinical notes. Reuses the pass-1 pathology context when the notes restate the
+  # stage. k: 18 = pull 18 best-matching chunks (more, since notes are noisier).
+  - id: clinical_tnm
+    kind: retrieve_and_prompt
+    retrieval:
+      kind: hybrid
+      query: "clinical stage at diagnosis original initial stage AJCC cT cN cM stage I II III IV de novo metastatic at presentation"
+      k: 20
+      source_file: clinical_note.csv
+    prompt: prompts/stage_v1_clinical_tnm.md
+
+  # Pass 3 — post-neoadjuvant ypTNM and residual cancer burden from pathology.
+  - id: posttreatment_path_stage
+    kind: retrieve_and_prompt
+    retrieval:
+      kind: hybrid
+      query: "post neoadjuvant treatment effect residual carcinoma ypT ypN ypM residual cancer burden RCB class mastectomy lumpectomy treated tumor bed"
+      k: 20
+      source_file: pathology_report.csv
+    prompt: prompts/stage_v1_posttreatment_path_stage.md
+
+  # Finalize — assemble stage_at_diagnosis (the overall stage group + which basis it
+  # came from), clinical_tnm, pathologic_tnm, and the supporting-evidence pointers.
+  # Pure Python, no language-model call.
+  - id: finalize
+    kind: python
+    module: stage_v1_python_helper.finalize

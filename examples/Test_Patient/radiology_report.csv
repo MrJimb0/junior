@@ -1,0 +1,109 @@
+patient_id,date,age,type,accession_number,title,author,linked_author,pat_enc_csn_id,order_proc_id,text
+9999999,2025-09-30T13:45:00,68.460,CT,RAD-25-114502,CT CHEST ABDOMEN PELVIS W IV CONTRAST,"SMITH, MAGGIE","DICKERSON, JAMES",999000004,836200001,"CT CHEST, ABDOMEN, AND PELVIS WITH IV CONTRAST
+
+Accession: RAD-25-114502
+Patient: BASSETT, KITTY (MRN 9999999)
+Date of Exam: 2025-09-30
+Date of Report: 2025-09-30
+Radiologist: Maggie Shaw, MD
+Ordering Provider: James Dickerson, MD
+
+CLINICAL HISTORY: 68-year-old female with a history of stage IIA invasive ductal carcinoma of the right breast treated in 2024 with partial mastectomy, adjuvant radiation and adjuvant anastrozole. Six weeks of right upper quadrant discomfort, 8 lb unintentional weight loss and rising alkaline phosphatase. Surveillance and symptom evaluation.
+
+TECHNIQUE: Helical CT of the chest, abdomen and pelvis was performed following administration of 100 mL Isovue 370 intravenous contrast. Multiplanar reformations were generated. DLP 712 mGy*cm. Comparison: CT chest, abdomen and pelvis 2025-03-22.
+
+FINDINGS:
+
+CHEST:
+Breasts: Post-surgical changes in the right breast upper-outer quadrant with architectural distortion and surgical clips, stable and consistent with prior partial mastectomy and radiation. No suspicious mass in either breast. No skin thickening.
+Axillae: No enlarged right or left axillary lymph nodes. No internal mammary adenopathy.
+Lungs: Clear. No pulmonary nodule or mass. No pleural effusion.
+Mediastinum: No mediastinal or hilar adenopathy. Heart size normal.
+
+ABDOMEN:
+Liver: THREE NEW HYPOENHANCING HEPATIC LESIONS, not present on the 2025-03-22 comparison study. The dominant lesion is in segment VI and measures 2.4 x 2.1 cm. A second lesion in segment VIII measures 1.6 cm and a third in segment IVa measures 1.1 cm. All demonstrate peripheral rim enhancement on portal venous phase imaging.
+Biliary: No intrahepatic or extrahepatic biliary ductal dilatation. Gallbladder unremarkable.
+Pancreas, spleen, adrenals: Unremarkable.
+Kidneys: A 1.2 cm simple cortical cyst in the left kidney, stable. No hydronephrosis.
+Bowel and peritoneum: No obstruction, free fluid or peritoneal nodularity.
+Retroperitoneum: No retroperitoneal adenopathy.
+
+PELVIS:
+No adnexal mass. Bladder unremarkable. No pelvic sidewall adenopathy or free fluid.
+
+MUSCULOSKELETAL:
+NEW SCLEROTIC LESION in the T9 vertebral body measuring 1.4 cm, not present on the prior study. No vertebral height loss and no epidural extension. No other focal osseous lesion.
+
+IMPRESSION:
+1. Three new hepatic lesions, dominant lesion 2.4 cm in segment VI, highly concerning for metastatic disease in this patient with a history of hormone receptor positive breast carcinoma. Tissue sampling is recommended for confirmation and for repeat receptor testing.
+2. New 1.4 cm sclerotic T9 vertebral lesion, also concerning for osseous metastasis.
+3. Stable post-treatment changes in the right breast. No evidence of locoregional recurrence in the right breast or right axilla.
+
+Electronically signed: Maggie Shaw, MD, 2025-09-30
+"
+9999999,2025-10-02T11:00:00,68.466,MRI,RAD-25-114789,MRI BRAIN W AND WO CONTRAST,"DICKERSON, JAMES","DICKERSON, JAMES",999000004,836200002,"MRI BRAIN WITH AND WITHOUT INTRAVENOUS CONTRAST
+
+Accession: RAD-25-114789
+Patient: BASSETT, KITTY (MRN 9999999)
+Date of Exam: 2025-10-02
+Date of Report: 2025-10-02
+Radiologist: James Dickerson, MD
+Ordering Provider: James Dickerson, MD
+
+CLINICAL HISTORY: 68-year-old female with a history of stage IIA invasive ductal carcinoma of the right breast (2024) and newly identified hepatic and osseous lesions concerning for metastatic disease. Staging of the central nervous system prior to starting systemic therapy. No neurologic symptoms reported.
+
+TECHNIQUE: Multiplanar multisequence MRI of the brain was performed before and after administration of 10 mL gadobutrol, including axial T1, axial T2 FLAIR, axial diffusion-weighted imaging with ADC mapping, susceptibility-weighted imaging, and post-contrast axial, coronal and sagittal T1.
+
+FINDINGS:
+Brain parenchyma: No abnormal parenchymal enhancement. No enhancing mass or ring-enhancing lesion. No restricted diffusion to suggest acute infarction. Scattered T2 FLAIR hyperintensities in the subcortical and periventricular white matter, most consistent with mild chronic small vessel ischemic change and unchanged in distribution for age.
+Leptomeninges: No abnormal leptomeningeal enhancement.
+Ventricles and extra-axial spaces: Normal in size and configuration. No midline shift, mass effect or extra-axial collection.
+Skull and calvarium: No focal marrow replacing lesion in the calvarium or skull base.
+Orbits, paranasal sinuses, mastoids: Unremarkable.
+
+IMPRESSION:
+1. NO EVIDENCE OF INTRACRANIAL METASTATIC DISEASE. No parenchymal or leptomeningeal metastasis.
+2. Mild chronic small vessel ischemic white matter change.
+
+Electronically signed: James Dickerson, MD, 2025-10-02
+"
+9999999,2026-01-12T14:20:00,68.745,CT,RAD-26-002188,CT CHEST ABDOMEN PELVIS W IV CONTRAST,"SMITH, MAGGIE","DICKERSON, JAMES",999000010,836200003,"CT CHEST, ABDOMEN, AND PELVIS WITH IV CONTRAST
+
+Accession: RAD-26-002188
+Patient: BASSETT, KITTY (MRN 9999999)
+Date of Exam: 2026-01-12
+Date of Report: 2026-01-12
+Radiologist: Maggie Shaw, MD
+Ordering Provider: James Dickerson, MD
+
+CLINICAL HISTORY: 68-year-old female with metastatic hormone receptor positive, HER2 negative breast carcinoma involving liver and bone, on first-line gemcitabine and paclitaxel since 2025-10-25. Restaging after four cycles.
+
+TECHNIQUE: Helical CT of the chest, abdomen and pelvis following 100 mL Isovue 370 intravenous contrast. Multiplanar reformations were generated. DLP 690 mGy*cm. Comparison: CT chest, abdomen and pelvis 2025-09-30.
+
+FINDINGS:
+
+CHEST:
+Breasts: Stable post-surgical and post-radiation changes in the right breast upper-outer quadrant. No new breast mass.
+Axillae: No axillary adenopathy.
+Lungs: Clear. No new pulmonary nodule. No pleural effusion.
+Mediastinum: No adenopathy.
+
+ABDOMEN:
+Liver: INTERVAL DECREASE in size of all three previously identified hepatic metastases. The dominant segment VI lesion measures 1.3 cm, decreased from 2.4 cm. The segment VIII lesion measures 0.8 cm, decreased from 1.6 cm. The segment IVa lesion is no longer clearly measurable. No new hepatic lesion.
+Biliary, pancreas, spleen, adrenals: Unremarkable.
+Kidneys: Stable 1.2 cm left renal cyst.
+Bowel, peritoneum, retroperitoneum: No obstruction, free fluid or adenopathy.
+
+PELVIS:
+No adnexal mass, adenopathy or free fluid.
+
+MUSCULOSKELETAL:
+The T9 sclerotic lesion is unchanged in size at 1.4 cm and appears more densely sclerotic than on the prior study, consistent with treatment response in an osseous metastasis. No new osseous lesion. No pathologic fracture.
+
+IMPRESSION:
+1. PARTIAL RESPONSE of hepatic metastatic disease. Sum of target lesion diameters decreased from 4.0 cm to 2.1 cm, a 48% decrease, meeting RECIST 1.1 criteria for partial response.
+2. Increasing sclerosis of the stable T9 osseous metastasis, consistent with treatment effect rather than progression.
+3. No new site of metastatic disease. No locoregional recurrence.
+
+Electronically signed: Maggie Shaw, MD, 2026-01-12
+"

@@ -1,0 +1,46 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "date_of_diagnosis output",
+  "description": "Ported from v0 date_of_diagnosis (4-pass strategy). Three breast-cancer timeline events, each with its own date + certainty + evidence + cited chunk. 'date_of_diagnosis' is an alias of the ORIGINAL diagnosis date (the canonical anchor other recipes depend on).",
+  "type": "object",
+  "required": ["date_of_diagnosis", "date_original_diagnosis", "rationale"],
+  "additionalProperties": true,
+  "properties": {
+    "date_of_diagnosis": {
+      "description": "Alias of date_original_diagnosis — the anchor other recipes (e.g. treatment_lines) read.",
+      "oneOf": [
+        {"type": "string", "pattern": "^\\d{4}-(\\d{2}|XX)-(\\d{2}|XX)$"},
+        {"type": "null"}
+      ]
+    },
+
+    "date_original_diagnosis": {
+      "oneOf": [
+        {"type": "string", "pattern": "^\\d{4}-(\\d{2}|XX)-(\\d{2}|XX)$"},
+        {"type": "null"}
+      ]
+    },
+    "original_certainty": {"type": ["integer", "null"], "minimum": 0, "maximum": 100},
+    "original_evidence_chunk_id": {"type": ["string", "null"]},
+
+    "date_locoregional_recurrence_diagnosis": {
+      "oneOf": [
+        {"type": "string", "pattern": "^\\d{4}-(\\d{2}|XX)-(\\d{2}|XX)$"},
+        {"type": "null"}
+      ]
+    },
+    "locoregional_recurrence_certainty": {"type": ["integer", "null"], "minimum": 0, "maximum": 100},
+    "locoregional_recurrence_evidence_chunk_id": {"type": ["string", "null"]},
+
+    "date_metastatic_diagnosis": {
+      "oneOf": [
+        {"type": "string", "pattern": "^\\d{4}-(\\d{2}|XX)-(\\d{2}|XX)$"},
+        {"type": "null"}
+      ]
+    },
+    "metastatic_certainty": {"type": ["integer", "null"], "minimum": 0, "maximum": 100},
+    "metastatic_evidence_chunk_id": {"type": ["string", "null"]},
+
+    "rationale": {"type": "string", "maxLength": 600}
+  }
+}

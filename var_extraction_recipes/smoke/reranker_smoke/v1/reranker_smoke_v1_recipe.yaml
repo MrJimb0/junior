@@ -1,0 +1,39 @@
+name: reranker_smoke
+version: v1
+collection: smoke
+archetype: classification_adjudication
+
+# A self-test ("smoke test"), not a clinical variable -- it just proves the third
+# local model still loads and runs. It is the ONLY recipe that uses the "reranker": a
+# model that re-scores the candidate text chunks search returned, putting the most
+# relevant ones on top. The specific reranker here is gte_reranker_modernbert (a
+# "cross-encoder" -- it reads the query and a candidate chunk together to score how
+# well they match). Because nothing else exercises it, the full slow test run cannot
+# pass unless this model works. It asks the model a trivial yes/no over the retrieved
+# text; the actual check is on the rerank receipt (a log line proving the cross-encoder
+# ran and produced a real score per candidate), NOT on the yes/no answer. Lives in its
+# own `smoke` collection so it is never mistaken for a real clinical variable.
+output_schema: reranker_smoke_v1_output_schema.json
+
+llm:
+  model: local_qwen
+  max_tokens: 128
+
+depends_on: []
+
+# Re-score the retrieved chunks with the cross-encoder and keep the top_n best.
+reranking:
+  cross_encoder: true   # score each (query, chunk) pair with the gte cross-encoder
+  model_id: gte_reranker_modernbert
+  top_n: 5   # keep the 5 highest-scoring chunks after reranking
+
+steps:
+  - id: retrieve_rerank
+    kind: retrieve_and_prompt
+    retrieval:
+      # hybrid = combine classic keyword search (BM25, term-frequency matching) with
+      # vector/meaning search, then merge the two ranked lists.
+      kind: hybrid
+      query: "cancer diagnosis stage treatment chemotherapy radiation pathology findings history"
+      k: 8   # fetch the 8 best-matching chunks before reranking trims to top_n
+    prompt: prompts/reranker_smoke_v1.md

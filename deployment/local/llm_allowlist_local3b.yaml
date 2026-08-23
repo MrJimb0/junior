@@ -1,0 +1,50 @@
+# Local 3-billion-parameter Qwen extractor — loaded fully OFFLINE for laptop
+# extraction, so no patient text ever leaves the machine.
+# The local_hf provider (model runs in-process via HuggingFace transformers) passes
+# `url` straight to transformers' from_pretrained loader with no network access, so a
+# real on-disk model directory loads with zero download.
+# (The committed deployment/local/llm_allowlist.yaml instead points at the smaller
+# 0.5-billion-parameter model on the HuggingFace Hub, which would auto-download — use
+# THIS file as allowlist_path when you want the offline 3B model for extraction.)
+allowed_endpoints:
+  - name: local_qwen
+    url: ./models/extraction/3B_param_local_qwen_extractor_for_example
+    provider: local_hf
+    attestation: self_hosted
+    default_model: ./models/extraction/3B_param_local_qwen_extractor_for_example
+    # Keep the 3B model at half precision on Apple Silicon. Without this explicit
+    # setting, auto device selection uses float32 on MPS, roughly doubling weight and
+    # generation memory and making the shared MPS allocator much easier to exhaust.
+    dtype: float16
+    # MPS attention memory grows rapidly with prompt length. Keep this example endpoint
+    # inside its validated laptop envelope and reject larger requests before generation,
+    # rather than risking a process-level memory-pressure kill.
+    # A MEASURED hardware ceiling, not a model limit. This model advertises a 32768
+    # context, but attention memory grows with the square of the prompt, so what the
+    # model accepts and what a laptop can execute are different numbers. Measured on a
+    # 48 GiB Apple Silicon machine, one generation of this model at float16 (5.75 GiB
+    # resident):
+    #
+    #     prompt tokens    peak GPU memory
+    #        816              7.2 GiB
+    #      3,942             10.5 GiB
+    #      7,909             17.1 GiB
+    #     15,816             62.9 GiB   <- past the machine; swaps, then jetsam
+    #     ~23,700            Metal refuses a single 36 GB buffer and the process dies
+    #
+    # A CONSERVATIVE DEFAULT, not a measurement of your machine. Measured once on a
+    # 48 GiB Apple Silicon laptop, which is a data point and not your hardware:
+    #
+    #     cap 8000    peak 11.4 GiB    60s/patient   `stage` and `date_of_diagnosis`
+    #                                                REFUSED — their prompts are ~10.4k
+    #     cap 11000   peak 64.6 GiB   412s/patient   both succeed, but past the machine:
+    #                                                it swaps, and a cohort will not finish
+    #
+    # So on this hardware the shipped breast-oncology recipes do not fit the local 3B at
+    # their current evidence size. 8000 is the setting that keeps the machine alive; the
+    # variables that need more fail loudly and say so, rather than truncating evidence or
+    # killing the run. Making them work here means reducing what step 5 selects (filters
+    # / top_n / evidence.max_context_tokens), not raising this number — 11000 was tried
+    # and the machine cannot hold it. Real extraction is for frontier endpoints or A100s,
+    # where this ceiling should be re-measured on that hardware.
+    max_prompt_tokens_cap: 8000

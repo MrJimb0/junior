@@ -1,0 +1,41 @@
+# Dev allowlist — used by `jr-pipeline extract` for local dev + smoke runs.
+#
+# Production runs MUST use an institutional allowlist that lives OUTSIDE
+# this repo (Box / Nero secure storage). This file exists only so a dev
+# can clone the repo, `pip install -e ".[dev,torch]"`, and run the full
+# extract pipeline against a synthetic patient without standing up any
+# external LLM server.
+#
+# The provider kind is ``local_hf`` — the model runs inside this same process,
+# loaded via HuggingFace transformers (HuggingFace = the public model hub and its
+# Python library). The `url` field carries the HuggingFace Hub model ID (not a
+# real web address); the weights auto-download on first use and cache in
+# ~/.cache/huggingface/.
+#
+# Attestation is ``self_hosted`` because the model runs locally on the
+# operator's own machine; no protected health information (PHI) leaves the machine.
+allowed_endpoints:
+  - name: local_qwen
+    url: Qwen/Qwen2.5-0.5B-Instruct
+    provider: local_hf
+    attestation: self_hosted
+    default_model: Qwen/Qwen2.5-0.5B-Instruct
+    # The provider is OFFLINE by default (local_files_only — it never reaches the
+    # network). This dev/demo endpoint points at a HuggingFace Hub id, so it must opt
+    # into a one-time auto-download. A real PHI endpoint instead points at an on-disk
+    # model directory and omits this, so it stays offline and refuses loudly rather
+    # than reaching out if the directory is missing — see
+    # deployment/local/llm_allowlist_local3b.yaml.
+    allow_download: true
+    # A ceiling on what this machine can execute, which is a different limit from what
+    # the model accepts: attention memory grows with the square of the prompt, so a
+    # context window is not a promise that your hardware can fill it. 8000 is carried
+    # over from the measured ceiling for the 3B endpoint (see
+    # llm_allowlist_local3b.yaml, which has the numbers) rather than measured for this
+    # model, and is conservative for one this small. It exists so the unbounded case
+    # cannot happen: without it, an oversized prompt does not fail, it takes the machine
+    # down — Metal refuses the allocation and the process dies with no Python error.
+    max_prompt_tokens_cap: 8000
+    # Optional extras: uncomment to override
+    # device: cpu        # or "cuda" / "mps" — defaults to auto-detect
+    # dtype: bfloat16    # or "float16" / "float32"

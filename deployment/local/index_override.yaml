@@ -1,0 +1,23 @@
+# Dev config for the "index" step: it builds the fast search structure over the
+# embedding vectors, so a query can find its nearest chunks without comparing against
+# every chunk. Self-contained — everything not set here uses the code defaults in
+# pipeline_steps/step_3_build_vector_index/build_index.py.
+
+run_id: "${oc.env:JR_RUN_ID,null}"
+
+index:
+  # hnswlib = the approximate-nearest-neighbor index that makes vector search fast.
+  kind: hnswlib
+  # Number of bidirectional links per vector — higher = better recall (fewer true
+  # neighbors missed), more memory. Recommended range 16-64; 32 is a good default.
+  M: 32
+  # How hard the builder searches while wiring up the graph — higher = better index
+  # quality, slower build.
+  ef_construction: 200
+  # How the index measures similarity between two vectors. "ip" = inner product,
+  # which is the correct measure when vectors are length-normalized (the default).
+  # Switch to "cosine" or "l2" (Euclidean distance) if you change the encoder's
+  # normalization setting.
+  space: ip
+  # Fixed seed — the value doesn't matter, only that it never changes between runs.
+  random_seed: 100

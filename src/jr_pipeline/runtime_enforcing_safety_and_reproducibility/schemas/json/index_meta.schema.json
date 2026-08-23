@@ -1,0 +1,23 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://jr-pipeline/schemas/index_meta.schema.json",
+  "title": "HNSW index sidecar envelope",
+  "description": "Sidecar JSON written alongside hnsw.bin. Records the index parameters and content hash. Not part of the parquet schema family.",
+  "allOf": [{"$ref": "artifact_envelope.schema.json"}],
+  "properties": {
+    "artifact_type": {"const": "index_meta"},
+    "sensitivity": {"const": "medium"},
+    "stream": {"const": "data"},
+    "payload": {
+      "type": "object",
+      "required": ["index_meta"],
+      "additionalProperties": true,
+      "properties": {
+        "index_meta": {
+          "type": "object",
+          "required": ["patient_id", "index_kind", "space", "M", "ef_construction", "random_seed", "size", "dim", "content_hash", "embeddings_sha256"]
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,192 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://jr-pipeline/schemas/artifact_envelope.schema.json",
+  "title": "Artifact Envelope",
+  "description": "Common outer shape carried by every JSON artifact the pipeline produces. Individual artifact types extend this by constraining 'payload' and may narrow 'artifact_type' / 'sensitivity'.",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "artifact_type",
+    "sensitivity",
+    "stream",
+    "produced_by",
+    "parent_artifacts",
+    "content_hash",
+    "payload"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "artifact_type": {
+      "type": "string",
+      "enum": [
+        "manifest",
+        "source_snapshot",
+        "chunk_index",
+        "state_transition",
+        "hashes",
+        "step_receipt",
+        "retrieval",
+        "variable_result",
+        "invariants",
+        "run_metrics_shard",
+        "health",
+        "rerun_manifest",
+        "code_lock",
+        "index_meta",
+        "ingest_file"
+      ]
+    },
+    "sensitivity": {
+      "type": "string",
+      "enum": [
+        "low",
+        "medium",
+        "high"
+      ]
+    },
+    "stream": {
+      "type": "string",
+      "enum": [
+        "code",
+        "data"
+      ]
+    },
+    "produced_by": {
+      "type": "object",
+      "required": [
+        "run_id",
+        "step",
+        "created_at"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "run_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "patient_id": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "step": {
+          "type": "string",
+          "enum": [
+            "ingest",
+            "embed",
+            "index",
+            "retrieve",
+            "rerank",
+            "package_for_extract",
+            "extract",
+            "validate",
+            "rerun",
+            "batch_report",
+            "code_seal"
+          ]
+        },
+        "variable": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "step_id": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "code_lock_hash": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "pattern": "^sha256:[a-f0-9]{64}$"
+        },
+        "recipe_hash": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "pattern": "^sha256:[a-f0-9]{64}$"
+        },
+        "schema_hash": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "pattern": "^sha256:[a-f0-9]{64}$"
+        },
+        "prompt_hash": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "pattern": "^sha256:[a-f0-9]{64}$"
+        },
+        "python_helpers_hash": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "pattern": "^sha256:[a-f0-9]{64}$"
+        },
+        "provider_config_hash": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "pattern": "^sha256:[a-f0-9]{64}$"
+        },
+        "retrieval_config_hash": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "pattern": "^sha256:[a-f0-9]{64}$"
+        },
+        "code_version": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "created_at": {
+          "type": "string",
+          "format": "date-time"
+        }
+      }
+    },
+    "parent_artifacts": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "path",
+          "content_hash"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "path": {
+            "type": "string"
+          },
+          "content_hash": {
+            "type": "string",
+            "pattern": "^sha256:[a-f0-9]{64}$"
+          }
+        }
+      }
+    },
+    "content_hash": {
+      "type": "string",
+      "pattern": "^sha256:[a-f0-9]{64}$"
+    },
+    "payload": {}
+  }
+}

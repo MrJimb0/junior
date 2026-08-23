@@ -1,0 +1,48 @@
+# LLM allowlist — the services this deployment is permitted to send chart text to.
+#
+# EDIT THIS BEFORE YOU RUN. The pipeline refuses any endpoint not named here, which is
+# the point: it is the one file standing between a patient's notes and a service nobody
+# signed an agreement with. Every <ANGLE_BRACKET> below is a placeholder and will fail
+# loudly if left in.
+#
+# "BAA-attested" means the service is covered by a Business Associate Agreement — the
+# HIPAA contract that lets protected health information be sent there. Mark an endpoint
+# `attestation: baa` only when your institution has one for it. `self_hosted` means the
+# weights run on hardware you control and nothing leaves it.
+#
+# The `auth` field names an ENVIRONMENT VARIABLE, never a key. The pipeline reads it at
+# call time, never writes it to disk, and never logs it. Set it in your shell:
+#
+#   export LLM_GATEWAY_KEY="$(cat ~/.config/jr/gateway_key)"
+#
+# The header the key is sent in depends on your gateway — an API-gateway product
+# usually wants its own (Azure API Management uses Ocp-Apim-Subscription-Key), while a
+# plain OpenAI-compatible server wants `Authorization: Bearer`. `provider` selects that.
+#
+# What each model can DO is declared separately, in ../../models_registry.yaml.
+
+# This example assumes the model runs on your own hardware — a vLLM or Ollama server on
+# a login node, or on the cluster itself. Nothing leaves the machine, so no BAA applies
+# and `self_hosted` is the honest attestation.
+
+allowed_endpoints:
+
+  # ── A self-hosted OpenAI-compatible server (vLLM, Ollama, llama.cpp) ──
+  - name: local_llm
+    url: http://<YOUR_MODEL_HOST>:<YOUR_MODEL_PORT>/v1/chat/completions
+    api_version: null
+    provider: openai_compat
+    attestation: self_hosted
+    default_model: <YOUR_MODEL_NAME>
+    # No auth field: a server on your own network with no key. Add one if yours has a key.
+
+  # ── A larger self-hosted model for the reasoning-heavy recipes ──
+  # Reasoning models take longer; raise the HTTP timeout rather than letting a run
+  # fail on a model that was going to answer.
+  - name: local_llm_reasoning
+    url: http://<YOUR_MODEL_HOST>:<YOUR_MODEL_PORT>/v1/chat/completions
+    api_version: null
+    provider: openai_compat
+    attestation: self_hosted
+    default_model: <YOUR_REASONING_MODEL_NAME>
+    default_timeout_seconds: 300

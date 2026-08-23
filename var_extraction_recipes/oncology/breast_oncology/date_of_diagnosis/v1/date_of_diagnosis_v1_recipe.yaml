@@ -1,0 +1,109 @@
+name: date_of_diagnosis
+version: v1
+collection: oncology
+
+# ─────────────────────────────────────────────────────────────────────────────
+# The paper's 4-pass date-of-diagnosis strategy, written declaratively. A "pass" is
+# one read of the chart by the language model, each pass looking at a different
+# slice of documents. Each model pass is
+# one retrieve_and_prompt step (find relevant snippets, then ask the model), and the
+# accumulator that combines the four passes' answers is
+# one deterministic Python finalize step.
+#
+# Archetype: temporal_anchor — the value is a date, but the work is disambiguating
+# WHICH event (original dx / locoregional recurrence / metastatic) each date marks.
+# ─────────────────────────────────────────────────────────────────────────────
+
+archetype: temporal_anchor          # forward-looking label; recorded as metadata for now
+
+# Named evidence roles a human would read for this variable (e.g. "the pathology
+# report", "the clinical note"). Forward-looking: today each role simply maps to a
+# source_file in the step's retrieval; once the role layer lands, each site can bind
+# a role to its own local document types/files.
+roles:
+  pathology_documents: { source_file: pathology_report.csv }
+  clinical_notes:      { source_file: clinical_note.csv }
+
+output_schema: date_of_diagnosis_v1_output_schema.json
+
+llm:
+  model: local_qwen
+  max_tokens: 2048          # cap on the model's answer length; the local model tops out at 2048 — raise substantially (toward 9000/stage) when using a HIPAA-covered hosted endpoint
+
+# How much chart text (measured in tokens, the model's word-pieces) we are allowed
+# to pack into one prompt as evidence (read by step_6 prepare_evidence, which assembles
+# the snippets to send the model, via retrieve_and_prompt).
+
+# Reranking re-orders the retrieved snippets so the most useful land at the top of the
+# prompt (read by step_5 via retrieve_and_prompt). The default ordering is a deterministic
+# blend of relevance signals; here we additionally weight pathology reports highest,
+# where the diagnosis is actually stated.
+reranking:
+  top_n: 20
+  chronological_order: oldest_first
+  source_priority:
+    pathology_report.csv: 1.0
+    clinical_note.csv: 0.6
+
+# Self-contained — no cross-variable dependencies.
+depends_on: []
+
+# The recipe always runs the repair passes. This intentionally spends extra work
+# to retain a single authoritative merge and catch later evidence corrections.
+steps:
+  # Pass 1 — pathology snippets: exact-match on pathology_report + a high-precision
+  # bundle (seed "breast"), oldest-first.
+  - id: pathology_snippets
+    kind: retrieve_and_prompt
+    retrieval:
+      kind: exact
+      query: "breast"
+      k: 20
+      source_file: pathology_report.csv
+    prompt: prompts/date_of_diagnosis_v1_pass1_pathology_snippets.md
+
+  # Pass 2 — full pathology reports: all pathology chunks, update-only (keep prior
+  # unless stronger/earlier evidence). Receives pass 1's output as the anchor.
+  - id: pathology_full
+    kind: retrieve_and_prompt
+    retrieval:
+      kind: bm25
+      query: "pathology report invasive carcinoma DCIS Nottingham grade specimen collected received date"
+      k: 30
+      source_file: pathology_report.csv
+    prompt: prompts/date_of_diagnosis_v1_pass2_pathology_full.md
+
+  # Pass 3 — refine with clinical notes: combined meaning-based vector search
+  # (via the HNSW fast nearest-neighbor index) and keyword (BM25) search on clinical
+  # notes; override the pathology anchor only for large, corroborated time gaps.
+  - id: refine_clinical
+    kind: retrieve_and_prompt
+    retrieval:
+      kind: hybrid
+      query: "first diagnosed originally diagnosed initial diagnosis history of breast cancer presented with date of diagnosis recurrence metastatic confirmed"
+      k: 18
+      source_file: clinical_note.csv
+    prompt: prompts/date_of_diagnosis_v1_pass3_refine_clinical.md
+
+  # Pass 4 — repair locoregional/metastatic dates: clinical notes, NEWEST-first,
+  # strong bias toward leaving a date blank rather than guessing, may reclassify a date
+  # between locoregional recurrence (LRR) and metastatic, never touches the original dx.
+  - id: repair_loco_met
+    kind: retrieve_and_prompt
+    retrieval:
+      kind: hybrid
+      query: "metastatic disease distant recurrence first found progression locoregional recurrence chest wall axilla first recurrence date confirmed imaging biopsy"
+      k: 15
+      source_file: clinical_note.csv
+    reranking:
+      top_n: 15
+      chronological_order: newest_first
+    prompt: prompts/date_of_diagnosis_v1_pass4_repair_loco_met.md
+
+  # Finalize — merge the 4 passes deterministically: a filled-in date wins per
+  # event; pass 4 may blank out or reclassify the LRR & metastatic dates but the original
+  # dx date is protected; sets the canonical date_of_diagnosis value other recipes read.
+  # Pure Python, no model call.
+  - id: finalize
+    kind: python
+    module: date_of_diagnosis_v1_python_helper.merge_passes

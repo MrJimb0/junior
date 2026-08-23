@@ -1,0 +1,31 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "genetics_germline output",
+  "description": "Ported from v0 genetics_germline (single BM25 pass). Enumeration: one entry per panel gene with a result + variant + provenance. 'mutated' = pathogenic/likely-pathogenic confirmed; 'negative' = not detected / VUS / benign; 'unknown' = not tested.",
+  "type": "object",
+  "required": ["genetic_testing_done", "genes"],
+  "additionalProperties": true,
+  "properties": {
+    "genetic_testing_done": {"type": "boolean"},
+    "testing_absent_reason": {"type": ["string", "null"]},
+    "evidence_chunk_id": {"type": ["string", "null"]},
+    "year_of_testing": {"oneOf": [{"type": "string", "pattern": "^\\d{4}$"}, {"type": "null"}]},
+    "company": {"type": ["string", "null"]},
+    "genes": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["gene", "result"],
+        "additionalProperties": true,
+        "properties": {
+          "gene": {"type": "string"},
+          "result": {"type": "string", "enum": ["mutated", "negative", "unknown"]},
+          "variant": {"type": ["string", "null"]},
+          "verbatim": {"type": ["string", "null"]},
+          "evidence_chunk_id": {"type": ["string", "null"]}
+        }
+      }
+    },
+    "rationale": {"type": "string", "maxLength": 400}
+  }
+}

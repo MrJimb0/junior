@@ -1,0 +1,99 @@
+patient_id,date,age,type,accession_number,title,author,linked_author,pat_enc_csn_id,order_proc_id,text
+9999999,2024-02-15T16:30:00,66.836,Surgical Pathology,SP-24-009342,RIGHT PARTIAL MASTECTOMY WITH SENTINEL LYMPH NODE BIOPSY,"SMITH, MAGGIE","SMITH, MAGGIE",999000002,735900001,"FINAL SURGICAL PATHOLOGY REPORT
+
+Accession: SP-24-009342
+Patient: BASSETT, KITTY (MRN 9999999)
+Date of Procedure: 2024-02-15
+Date of Report: 2024-02-19
+Pathologist: Maggie Shaw, MD
+
+CLINICAL HISTORY: 66-year-old postmenopausal female with biopsy-proven invasive ductal carcinoma of the right breast (ultrasound-guided core needle biopsy 2024-01-22), clinically node negative. Right partial mastectomy with sentinel lymph node biopsy performed.
+
+SPECIMENS SUBMITTED:
+A. Breast, right, partial mastectomy (lumpectomy) with wire localization
+B. Lymph node, right axilla, sentinel node #1
+C. Lymph node, right axilla, sentinel node #2
+D. Lymph node, right axilla, sentinel node #3
+
+DIAGNOSIS:
+A. BREAST, RIGHT, UPPER-OUTER QUADRANT, PARTIAL MASTECTOMY:
+   - INVASIVE DUCTAL CARCINOMA, NO SPECIAL TYPE (NST)
+   - Ductal carcinoma in situ, intermediate nuclear grade, comprising approximately 10% of the tumor
+   - All margins negative for invasive carcinoma and for DCIS
+B-D. LYMPH NODES, RIGHT AXILLA, SENTINEL BIOPSY (0 of 3):
+   - No carcinoma identified in three sentinel lymph nodes
+
+SYNOPTIC REPORT - INVASIVE CARCINOMA OF THE BREAST
+Procedure: Partial mastectomy (breast-conserving surgery) with sentinel lymph node biopsy
+Laterality: Right
+Tumor Site: Upper-outer quadrant, 10 o'clock position, 4.0 cm from the nipple
+Tumor Focality: Single focus of invasive carcinoma
+Tumor Size: 3.8 cm (greatest dimension of the invasive component)
+Histologic Type: Invasive ductal carcinoma, no special type
+Histologic Grade: Nottingham combined histologic grade 2 of 3 (total score 6 of 9; tubule formation 3, nuclear pleomorphism 2, mitotic count 1)
+Ductal Carcinoma In Situ: Present; intermediate nuclear grade; approximately 10% of tumor; no comedonecrosis
+Lymphovascular Invasion: Not identified
+Skin and Nipple: Not involved
+Margins:
+- Superior margin: Negative; closest distance 0.4 cm
+- Inferior margin: Negative; closest distance 1.1 cm
+- Medial margin: Negative; closest distance 0.9 cm
+- Lateral margin: Negative; closest distance 1.4 cm
+- Anterior and posterior margins: Negative
+Treatment Effect: Not applicable (no neoadjuvant therapy)
+Regional Lymph Nodes:
+- Number of sentinel nodes examined: 3
+- Number involved: 0
+- Isolated tumor cells: Not identified
+Pathologic Stage Classification (pTNM, AJCC 8th Edition):
+- Primary Tumor (pT): pT2 (tumor greater than 2 cm but not more than 5 cm in greatest dimension)
+- Regional Lymph Nodes (pN): pN0(sn) (no regional lymph node metastasis identified on sentinel biopsy)
+- Distant Metastasis (pM): Not applicable (no distant metastasis identified)
+- AJCC 8th Edition anatomic stage group: Stage IIA (pT2 pN0 cM0)
+
+ANCILLARY STUDIES (performed on the invasive component):
+- Estrogen Receptor (ER): POSITIVE, 95% of tumor nuclei, strong staining intensity
+- Progesterone Receptor (PR): POSITIVE, 80% of tumor nuclei, strong staining intensity
+- HER2 (ERBB2) by immunohistochemistry: 1+, NEGATIVE
+- Ki-67 proliferation index: 15%
+Hormone receptor and HER2 results interpreted per current ASCO/CAP guideline criteria.
+
+COMMENT: The findings are those of a 3.8 cm Nottingham grade 2 invasive ductal carcinoma of the right breast, hormone receptor positive and HER2 negative, excised with negative margins, with three negative sentinel lymph nodes. Tissue has been submitted for the 21-gene recurrence score assay at the request of the treating medical oncologist.
+
+Electronically signed: Maggie Shaw, MD, 2024-02-19
+"
+9999999,2025-10-10T11:00:00,68.488,Surgical Pathology,SP-25-088117,LIVER LESION CORE NEEDLE BIOPSY,"DICKERSON, JAMES","DICKERSON, JAMES",999000005,735900002,"FINAL SURGICAL PATHOLOGY REPORT
+
+Accession: SP-25-088117
+Patient: BASSETT, KITTY (MRN 9999999)
+Date of Procedure: 2025-10-10
+Date of Report: 2025-10-13
+Pathologist: James Dickerson, MD (covering for primary pathologist)
+
+CLINICAL HISTORY: 68-year-old female with a history of resected stage IIA invasive ductal carcinoma of the right breast (2024), hormone receptor positive and HER2 negative, treated with breast-conserving surgery, adjuvant whole-breast radiation and adjuvant anastrozole. New hypoenhancing hepatic lesions on surveillance imaging concerning for metastatic disease. CT-guided core needle biopsy of the dominant segment VI hepatic lesion.
+
+SPECIMEN SUBMITTED:
+A. Liver, segment VI lesion, core needle biopsy (three cores, aggregate 1.8 cm)
+
+DIAGNOSIS:
+A. LIVER, SEGMENT VI, CORE NEEDLE BIOPSY:
+   - METASTATIC ADENOCARCINOMA, MORPHOLOGICALLY AND IMMUNOPHENOTYPICALLY CONSISTENT WITH BREAST PRIMARY
+   - Background hepatic parenchyma with mild macrovesicular steatosis; no significant fibrosis
+
+MICROSCOPIC DESCRIPTION: Sections show cores of hepatic parenchyma extensively infiltrated by a moderately differentiated adenocarcinoma arranged in cords, small nests and occasional single files. The tumor cells have moderately pleomorphic nuclei with prominent nucleoli and eosinophilic cytoplasm. Mitotic figures are readily identified. The morphology is similar to the patient's 2024 right breast primary.
+
+IMMUNOHISTOCHEMISTRY (performed on block A1):
+- GATA3: POSITIVE (diffuse, strong)
+- Estrogen Receptor (ER): POSITIVE, 90% of tumor nuclei, strong staining intensity
+- Progesterone Receptor (PR): NEGATIVE (less than 1% of tumor nuclei)
+- HER2 (ERBB2) by immunohistochemistry: 0, NEGATIVE
+- CK7: Positive
+- CK20: Negative
+- TTF-1: Negative
+- CDX2: Negative
+- Ki-67 proliferation index: 35%
+
+COMMENT: The immunoprofile (GATA3 positive, CK7 positive, CK20 negative, TTF-1 negative, CDX2 negative) supports metastatic carcinoma of breast origin rather than a hepatobiliary, pulmonary or gastrointestinal primary. Compared with the 2024 right breast resection, the estrogen receptor remains strongly positive while the progesterone receptor is now negative and the proliferation index has risen from 15% to 35%. Receptor discordance between a primary tumor and a metachronous metastasis is well described, and current guidelines recommend that treatment decisions follow the receptor status of the biopsied metastatic site. HER2 remains negative by immunohistochemistry; no reflex in situ hybridization is indicated for a score of 0.
+
+Electronically signed: James Dickerson, MD, 2025-10-13
+"

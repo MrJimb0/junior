@@ -1,0 +1,45 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://jr-pipeline/schemas/state_transition.schema.json",
+  "title": "State Transition",
+  "description": "One line of data/state.jsonl. Append-only log of state transitions for the execution state machine. Patient-linked (medium sensitivity) when patient_id is set.",
+  "allOf": [{"$ref": "artifact_envelope.schema.json"}],
+  "properties": {
+    "artifact_type": {"const": "state_transition"},
+    "sensitivity": {"enum": ["low", "medium"]},
+    "stream": {"const": "data"},
+    "payload": {
+      "type": "object",
+      "required": ["entity", "from_state", "to_state", "reason", "ts"],
+      "additionalProperties": false,
+      "properties": {
+        "entity": {
+          "type": "object",
+          "required": ["kind"],
+          "properties": {
+            "kind": {
+              "type": "string",
+              "enum": ["run", "patient", "step", "variable", "step_instance"]
+            },
+            "run_id": {"type": "string"},
+            "patient_id": {"type": ["string", "null"]},
+            "step": {"type": ["string", "null"]},
+            "variable": {"type": ["string", "null"]},
+            "step_id": {"type": ["string", "null"]}
+          }
+        },
+        "from_state": {
+          "type": ["string", "null"],
+          "enum": [null, "not_started", "queued", "running", "completed", "failed", "cancelled", "invalidated"]
+        },
+        "to_state": {
+          "type": "string",
+          "enum": ["not_started", "queued", "running", "completed", "failed", "cancelled", "invalidated"]
+        },
+        "reason": {"type": "string"},
+        "ts": {"type": "string", "format": "date-time"},
+        "child_run_id": {"type": ["string", "null"]}
+      }
+    }
+  }
+}

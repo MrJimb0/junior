@@ -1,0 +1,139 @@
+# Models Registry — single source of truth for all model references.
+#
+# Every model used by the pipeline is registered here with metadata,
+# version, path, and compatibility. Recipes reference models by registry
+# name, not by loose paths. This prevents stringly-typed chaos.
+#
+# The runtime resolves registry names to paths/endpoints at execution time.
+
+models:
+
+  # ── Embedding models ──────────────────────────────────────────────
+  bioclinical_modernbert:
+    type: embedding
+    provider: local_huggingface
+    path: models/embedding/thomas-sounack:BioClinical-ModernBERT-base23APR2026
+    model_id: thomas-sounack/BioClinical-ModernBERT-base
+    version: "2026-04-23"
+    dim: 768
+    max_tokens: 512
+    context: clinical text (notes, pathology, radiology)
+    license: apache-2.0
+    sha256: null  # pinned at deployment time via embed_override.yaml
+
+  # NeuML's BioClinical ModernBERT — used for query-time embeddings.
+  # 1024-token max length (longer than the base model above).
+  neuml_bioclinical_modernbert_embeddings:
+    type: embedding
+    provider: local_huggingface
+    path: models/embedding/NeuML_bioclinical-modernbert-base-embeddings
+    model_id: NeuML/bioclinical-modernbert-base-embeddings
+    version: "2025"
+    dim: 768
+    max_tokens: 1024
+    context: clinical text query encoder (query-encoder default)
+    license: apache-2.0
+    sha256: null
+
+  # ── Extraction models (local) ────────────────────────────────────
+  qwen_3b_local:
+    type: extraction
+    provider: local_huggingface
+    path: models/extraction/3B_param_local_qwen_extractor_for_example
+    context_window: 32768
+    license: qwen-research
+    intended_use: development and demo only
+    notes: not validated for production clinical use
+
+  # ── Extraction models (institutional gateway — BAA-attested) ────
+  # Hosted endpoints are declared in your deployment's llm_allowlist.yaml.
+  # Registry entries below pin the model name; the allowlist holds the URL.
+
+  hosted_gpt5:
+    type: extraction
+    provider: openai_compatible
+    endpoint_name: hosted_gpt5            # resolves via allowlist
+    model_name: gpt-5
+    context_window: 200000
+    requires_allowlist: true
+    requires_api_key: true
+    notes: Azure OpenAI GPT-5 via an institutional gateway. Uses max_completion_tokens; refuses temperature param.
+    quirks:
+      use_max_completion_tokens: true
+      skip_temperature: true
+
+  hosted_gpt4o:
+    type: extraction
+    provider: openai_compatible
+    endpoint_name: hosted_gpt4o
+    model_name: gpt-4o
+    context_window: 128000
+    requires_allowlist: true
+    requires_api_key: true
+    notes: Azure OpenAI GPT-4o via an institutional gateway.
+
+  hosted_deepseek_r1:
+    type: extraction
+    provider: openai_compatible
+    endpoint_name: hosted_deepseek_r1
+    model_name: deepseek-chat
+    context_window: 64000
+    requires_allowlist: true
+    requires_api_key: true
+    notes: DeepSeek-R1 reasoning model via an institutional gateway. Slower — bump timeout to 300s.
+    default_timeout_seconds: 300
+
+  local_qwen_8b_ollama:
+    type: extraction
+    provider: openai_compatible          # Ollama exposes OpenAI-compatible API
+    endpoint_name: local_qwen_8b_ollama
+    model_name: qwen3:8b-32k
+    context_window: 32768
+    requires_allowlist: true
+    requires_api_key: false              # local server, no key
+    notes: Qwen3 8B running locally via Ollama. For dev iteration and offline runs.
+
+  # ── Rerankers ────────────────────────────────────────────────────
+  feature_fusion_default:
+    type: reranker
+    provider: built_in
+    kind: feature_fusion
+    version: "1.0.0"
+    config:
+      weights: {retriever_score: 0.4, lexical_overlap: 0.4, source_priority: 0.2}
+
+  gte_reranker_modernbert:
+    type: reranker
+    provider: cross_encoder
+    kind: cross_encoder
+    path: models/reranking/gte_reranker_modernbert_base_cross_encoder
+    base_model: Alibaba-NLP/gte-reranker-modernbert-base
+    max_tokens: 8192
+    num_labels: 1
+    license: apache-2.0
+    notes: ModernBERT seq-classification cross-encoder; scored via transformers AutoModelForSequenceClassification (NOT sentence-transformers).
+
+  # Example: trained per-variable reranker
+  # treatment_lines_reranker_v2:
+  #   type: reranker
+  #   provider: cross_encoder
+  #   path: recipes/treatment_lines/v2/trained_adapter/
+  #   trained_on: training_dataset_2026_05_24
+  #   eval_report: recipes/treatment_lines/v2/trained_adapter/eval.json
+  #   base_model: cross-encoder/ms-marco-MiniLM-L-6-v2
+  #   promotes_from: experiment_tracker run search_042
+
+  # ── Trained rerankers (per-variable) ─────────────────────────
+  # Trained adapters live in models/reranking/<variable>/<version>/
+  # Recipes reference them by model_id, not by path.
+  #
+  # Example:
+  # treatment_lines_reranker_v2:
+  #   type: reranker
+  #   provider: cross_encoder
+  #   path: models/reranking/treatment_lines/v2/adapter/
+  #   base_model: cross-encoder/ms-marco-MiniLM-L-6-v2
+  #   trained_on: training_dataset_2026_05_24
+  #   evaluation_report: models/reranking/treatment_lines/v2/evaluation_report.json
+  #   training_data_manifest: models/reranking/treatment_lines/v2/training_data_manifest.json
+  #   model_manifest: models/reranking/treatment_lines/v2/model_manifest.json

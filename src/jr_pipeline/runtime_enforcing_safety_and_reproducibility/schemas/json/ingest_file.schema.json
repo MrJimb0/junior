@@ -1,0 +1,117 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://jr-pipeline/schemas/ingest_file.schema.json",
+  "title": "Preserve Per-File Sidecar",
+  "description": "Sidecar JSON written alongside each structured/<stem>.parquet. Records source-file identity and parquet identity for one preserved file.",
+  "allOf": [
+    {
+      "$ref": "artifact_envelope.schema.json"
+    }
+  ],
+  "properties": {
+    "artifact_type": {
+      "const": "ingest_file"
+    },
+    "sensitivity": {
+      "const": "medium"
+    },
+    "stream": {
+      "const": "data"
+    },
+    "payload": {
+      "type": "object",
+      "required": [
+        "patient_id",
+        "source_file",
+        "parquet_path",
+        "row_count",
+        "column_count",
+        "columns",
+        "source_content_hash",
+        "parquet_content_hash",
+        "polars_version",
+        "compression",
+        "metadata_columns",
+        "data_columns"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "patient_id": {
+          "type": "string"
+        },
+        "source_file": {
+          "type": "string"
+        },
+        "parquet_path": {
+          "type": "string"
+        },
+        "row_count": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "column_count": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "columns": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "name",
+              "dtype"
+            ],
+            "additionalProperties": false,
+            "properties": {
+              "name": {
+                "type": "string"
+              },
+              "dtype": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "source_content_hash": {
+          "type": "string",
+          "pattern": "^sha256:[a-f0-9]{64}$"
+        },
+        "parquet_content_hash": {
+          "type": "string",
+          "pattern": "^sha256:[a-f0-9]{64}$"
+        },
+        "polars_version": {
+          "type": "string"
+        },
+        "compression": {
+          "type": "string",
+          "enum": [
+            "snappy",
+            "zstd",
+            "gzip",
+            "lz4",
+            "brotli",
+            "uncompressed"
+          ]
+        },
+        "metadata_columns": {
+          "type": "object",
+          "description": "Which source column of THIS file holds each standard chart metadata field (author, document_date, specialty, ...), resolved at ingest from this site's column map. Null means the file carries no such column. Recorded rather than applied: the parquet stays a faithful copy of the source, and every later step reads this one settled answer instead of guessing again.",
+          "additionalProperties": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        },
+        "data_columns": {
+          "type": "object",
+          "description": "{our name: this file's column} for the table's own data (a lab value, a vital sign, an ICD code), resolved at ingest from this site's column map. A recipe reading this table directly asks for our name and gets this site's column, so one recipe runs at two institutions. Empty when the map names none.",
+          "additionalProperties": {
+            "type": "string"
+          }
+        }
+      }
+    }
+  }
+}

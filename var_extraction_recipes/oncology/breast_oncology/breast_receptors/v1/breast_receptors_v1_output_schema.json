@@ -1,0 +1,31 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "breast_receptors output",
+  "description": "Breast-specific receptor / grade / margin features at original diagnosis. null = not stated / not applicable (e.g. a non-breast tumor). evidence_chunk_id grounds the populated values; when nothing is found everything is null and no provenance is required.",
+  "type": "object",
+  "required": ["er_status", "pr_status", "her2_status", "rationale"],
+  "additionalProperties": true,
+  "properties": {
+    "er_status":   {"oneOf": [{"type": "string", "enum": ["positive", "negative"]}, {"type": "null"}]},
+    "pr_status":   {"oneOf": [{"type": "string", "enum": ["positive", "negative"]}, {"type": "null"}]},
+    "her2_status": {"oneOf": [{"type": "string", "enum": ["positive", "negative"]}, {"type": "null"}]},
+    "grade":         {"oneOf": [{"type": "integer", "minimum": 1, "maximum": 3}, {"type": "null"}]},
+    "tumor_size_cm": {"oneOf": [{"type": "number"}, {"type": "null"}]},
+    "margins":       {"oneOf": [{"type": "string", "enum": ["clear", "close", "positive"]}, {"type": "null"}]},
+    "er_percent": {"type": ["number", "null"], "minimum": 0, "maximum": 100},
+    "pr_percent": {"type": ["number", "null"], "minimum": 0, "maximum": 100},
+    "her2_ihc": {"type": ["string", "null"]},
+    "her2_ish": {"type": ["string", "null"]},
+    "histologic_type": {"type": ["string", "null"]},
+    "invasive_foci_count": {"type": ["integer", "null"], "minimum": 0},
+    "positive_nodes": {"type": ["integer", "null"], "minimum": 0},
+    "nodes_examined": {"type": ["integer", "null"], "minimum": 0},
+    "neoadjuvant_therapy_before_specimen": {"type": ["boolean", "null"]},
+    "evidence_chunk_id": {"type": ["string", "null"]},
+    "evidence_chunk_ids": {
+      "type": "array",
+      "items": {"type": "string"}
+    },
+    "rationale": {"type": "string", "maxLength": 400}
+  }
+}

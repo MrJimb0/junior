@@ -1,0 +1,36 @@
+# Dev config for the "embed" step: it turns each chunk of chart text into an
+# "embedding" — a numeric vector that captures the chunk's meaning, so chunks with
+# similar clinical content land near each other. Self-contained —
+# everything not set here uses the code defaults in
+# pipeline_steps/step_2_embed_chunks/embed.py. Auto mode embeds the `text` column
+# from every ingested structured table (stored as a parquet file) that has one.
+#
+# Selects the real BioClinical-ModernBERT (trained on clinical notes) as the
+# encoder (the text-to-vector model). Embed reads `model_id` as a folder on this machine
+# and never downloads anything, because a machine holding protected health information
+# should not reach the network to start a run. So fetch the weights once, before the
+# first run, from the repository root (~150 MB):
+#
+#   hf download NeuML/bioclinical-modernbert-base-embeddings \
+#     --local-dir models/embedding/NeuML_bioclinical-modernbert-base-embeddings
+#
+# No content-hash pinning of the weights in dev — production runs use the cluster
+# config, which pins the exact weights.
+
+run_id: "${oc.env:JR_RUN_ID,null}"
+
+encoder:
+  model_id: ./models/embedding/NeuML_bioclinical-modernbert-base-embeddings
+  pooling: mean
+  normalize: true
+  max_tokens: 512
+  device: auto
+
+# The docs/dev_setup.md walkthrough reuses this one config for embed, index, AND
+# extract. embed/index ignore the three keys below; extract reads them — which
+# variables to pull, where the recipe tree lives, and the LLM endpoint allowlist.
+# The 0.5B smoke model named in llm_allowlist.yaml auto-downloads on first use.
+recipes_root: ./var_extraction_recipes
+recipes:
+  - date_of_birth
+allowlist_path: ./deployment/local/llm_allowlist.yaml
